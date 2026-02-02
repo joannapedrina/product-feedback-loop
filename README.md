@@ -21,6 +21,8 @@ Customer feedback → GTM team (Sales/CS) → Product triage → Engineering bui
 6. **Implementation** - How to roll this out and get buy-in from stakeholders
 7. **Discovery Tools** - Supporting PMs in understanding what to build next
 8. **Targeted Collection** - Time-based and usage-based feedback maturity, plus organic collection methods
+9. **Verify Before Build** - Treating feedback clusters as hypotheses; statistical significance per segment
+10. **Data Collection (Airtable)** - Centralizing all feedback enriched with customer data
 
 ## Core Philosophy
 
@@ -46,6 +48,29 @@ Customers are constantly sharing feedback—just not in survey form:
 - **1st use**: Is it obvious?
 - **20th use**: What slows them down?
 - **50th use**: What are the limits?
+
+### Verify Before You Build
+
+The plural of anecdote is not data—it's a hypothesis:
+- 5 users ask for X → **Hypothesis**, not feature
+- Talk to 20 more users in that segment
+- Look for unprompted mentions
+- Only build if pain is validated and sized
+
+### Statistical Significance
+
+Ensure enough data per segment before acting:
+- 10-50 customers → 5-10 data points (directional)
+- 50-200 customers → 15-30 data points (~80% confidence)
+- 200-1000 customers → 50-100 data points (~90% confidence)
+
+### Airtable as the Central Hub
+
+Collect, organize, and enrich all feedback:
+- **Feedback Items**: Verbatim, source, category, product/model
+- **Customers**: Industry, region, tier, lifecycle, use case
+- **Themes**: Clustered feedback with status and ARR impact
+- Role-based views for Leadership, PM, Engineering, Sales
 
 ## Tech Stack (Current)
 
