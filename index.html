@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Product Feedback Loop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 2rem 2rem 3rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: -2rem auto 2rem;
+            padding: 0 2rem;
+        }
+
+        /* Overview Card */
+        .overview-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 4px solid #f59e0b;
+        }
+
+        .overview-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #f59e0b;
+        }
+
+        .overview-text {
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+
+        .key-questions {
+            background: #fffbeb;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .key-questions h4 {
+            color: #b45309;
+            margin-bottom: 0.75rem;
+        }
+
+        .key-questions ul {
+            margin-left: 1.5rem;
+            color: #92400e;
+        }
+
+        .key-questions li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Flow Diagram */
+        .flow-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+
+        .flow-node {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            min-width: 140px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .flow-node:hover {
+            border-color: #f59e0b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+        }
+
+        .flow-node.customer { border-color: #10b981; background: #ecfdf5; }
+        .flow-node.gtm { border-color: #3b82f6; background: #eff6ff; }
+        .flow-node.product { border-color: #f59e0b; background: #fffbeb; }
+        .flow-node.engineering { border-color: #8b5cf6; background: #f5f3ff; }
+
+        .flow-node-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-node-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .flow-node-subtitle {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: #cbd5e1;
+            flex-shrink: 0;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            white-space: nowrap;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab:hover {
+            color: #1e293b;
+            background: white;
+        }
+
+        .tab.active {
+            color: #f59e0b;
+            background: white;
+            border-bottom-color: #f59e0b;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 2rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Audience Cards */
+        .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .audience-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .audience-card h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .audience-card ul {
+            margin-left: 1.25rem;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        .audience-card li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Segmentation */
+        .segment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .segment-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .segment-card h5 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .segment-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .segment-tag {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+        }
+
+        /* Feedback Categories */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+
+        .category-card:hover {
+            border-color: #f59e0b;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .category-icon.feedback { background: #dbeafe; }
+        .category-icon.requests { background: #dcfce7; }
+        .category-icon.bugs { background: #fee2e2; }
+        .category-icon.pain { background: #fef3c7; }
+        .category-icon.not-working { background: #fce7f3; }
+        .category-icon.working { background: #d1fae5; }
+
+        .category-title {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .category-desc {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+
+        .category-uses {
+            background: #f8fafc;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        .category-uses strong {
+            color: #475569;
+        }
+
+        /* Automation Table */
+        .automation-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .automation-table th {
+            text-align: left;
+            padding: 1rem;
+            background: #f8fafc;
+            font-weight: 600;
+            color: #1e293b;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .automation-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+        }
+
+        .automation-table tr:hover {
+            background: #fefce8;
+        }
+
+        .tool-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .tool-badge.slack { background: #4A154B; color: white; }
+        .tool-badge.salesforce { background: #00A1E0; color: white; }
+        .tool-badge.notion { background: #000; color: white; }
+        .tool-badge.linear { background: #5E6AD2; color: white; }
+        .tool-badge.github { background: #24292e; color: white; }
+        .tool-badge.google { background: #4285F4; color: white; }
+        .tool-badge.ai { background: #f59e0b; color: white; }
+
+        /* Implementation Steps */
+        .implementation-steps {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .impl-step {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 1rem;
+        }
+
+        .impl-step-number {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .impl-step-content h4 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .impl-step-content p {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .impl-stakeholders {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .stakeholder-tag {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+        }
+
+        /* Discovery Tools */
+        .discovery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .discovery-card {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #fcd34d;
+        }
+
+        .discovery-card h4 {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #92400e;
+        }
+
+        .discovery-card p {
+            font-size: 0.875rem;
+            color: #a16207;
+            margin-bottom: 1rem;
+        }
+
+        .discovery-card ul {
+            margin-left: 1.25rem;
+            font-size: 0.875rem;
+            color: #92400e;
+        }
+
+        /* Product/Model Matrix */
+        .matrix-container {
+            overflow-x: auto;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            min-width: 600px;
+        }
+
+        .matrix-table th, .matrix-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border: 1px solid #e2e8f0;
+        }
+
+        .matrix-table th {
+            background: #f8fafc;
+            font-weight: 600;
+        }
+
+        .matrix-table th:first-child {
+            background: #1e293b;
+            color: white;
+        }
+
+        .matrix-table td:first-child {
+            font-weight: 500;
+            background: #f8fafc;
+        }
+
+        .priority-high { color: #dc2626; font-weight: 600; }
+        .priority-medium { color: #f59e0b; font-weight: 600; }
+        .priority-low { color: #10b981; font-weight: 600; }
+
+        /* Footer */
+        .footer-note {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.875rem;
+            margin-top: 2rem;
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .flow-diagram {
+                flex-direction: column;
+            }
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Enterprise Product Feedback Loop</h1>
+        <p>Steering feedback from customers → GTM → Product → Engineering → back to customers</p>
+    </div>
+
+    <div class="container">
+        <!-- Overview -->
+        <div class="overview-card">
+            <div class="overview-title">The Challenge</div>
+            <p class="overview-text">
+                Enterprise customers generate feedback across dozens of touchpoints: sales calls, support tickets, Slack channels,
+                usage data, NPS surveys, and more. The challenge is creating a system that captures this feedback, routes it to
+                the right teams, and closes the loop back to customers—all without creating bureaucratic overhead.
+            </p>
+            <div class="key-questions">
+                <h4>Key Questions This Framework Answers:</h4>
+                <ul>
+                    <li>Where can we implement automations to reduce manual work?</li>
+                    <li>How do we get buy-in and adoption across teams?</li>
+                    <li>What tools and processes support Product Managers in discovery?</li>
+                    <li>How do we segment feedback for different models, products, and betas?</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Flow Diagram -->
+        <div class="flow-section">
+            <div class="section-title">📊 The Feedback Flow</div>
+            <div class="flow-diagram">
+                <div class="flow-node customer">
+                    <div class="flow-node-icon">🏢</div>
+                    <div class="flow-node-title">Enterprise Customers</div>
+                    <div class="flow-node-subtitle">Feedback sources</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node gtm">
+                    <div class="flow-node-icon">💼</div>
+                    <div class="flow-node-title">GTM Team</div>
+                    <div class="flow-node-subtitle">Sales, CS, Support</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node product">
+                    <div class="flow-node-icon">📋</div>
+                    <div class="flow-node-title">Product</div>
+                    <div class="flow-node-subtitle">Triage & Prioritize</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node engineering">
+                    <div class="flow-node-icon">⚙️</div>
+                    <div class="flow-node-title">Engineering</div>
+                    <div class="flow-node-subtitle">Build & Ship</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node customer">
+                    <div class="flow-node-icon">✅</div>
+                    <div class="flow-node-title">Customer Update</div>
+                    <div class="flow-node-subtitle">Close the loop</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Tabs -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('audience')">👥 By Audience</button>
+                <button class="tab" onclick="showTab('segmentation')">🎯 Segmentation</button>
+                <button class="tab" onclick="showTab('categories')">📂 Feedback Types</button>
+                <button class="tab" onclick="showTab('products')">🧠 Models & Products</button>
+                <button class="tab" onclick="showTab('automation')">⚡ Automations</button>
+                <button class="tab" onclick="showTab('implementation')">🚀 Implementation</button>
+                <button class="tab" onclick="showTab('discovery')">🔍 Discovery Tools</button>
+                <button class="tab" onclick="showTab('targeted')">🎪 Targeted Collection</button>
+            </div>
+
+            <!-- Audience Tab -->
+            <div id="audience" class="tab-content active">
+                <h3 style="margin-bottom: 1rem;">What Each Stakeholder Needs</h3>
+                <p style="color: #64748b; margin-bottom: 1.5rem;">Different audiences need different views of the same feedback. Design dashboards and reports for each.</p>
+
+                <div class="audience-grid">
+                    <div class="audience-card">
+                        <h4>👔 Leadership</h4>
+                        <ul>
+                            <li><strong>Strategic themes:</strong> What are the top 3 things customers are asking for?</li>
+                            <li><strong>Churn signals:</strong> Which customers are at risk and why?</li>
+                            <li><strong>Market gaps:</strong> What are we losing deals on?</li>
+                            <li><strong>Build vs Kill:</strong> What should we double down on vs stop?</li>
+                            <li><strong>Competitive intel:</strong> How do we compare to competitors?</li>
+                        </ul>
+                    </div>
+                    <div class="audience-card">
+                        <h4>📋 Product Managers</h4>
+                        <ul>
+                            <li><strong>Detailed feedback:</strong> Raw quotes and context</li>
+                            <li><strong>Request frequency:</strong> How many customers want X?</li>
+                            <li><strong>Customer segments:</strong> Who's asking for what?</li>
+                            <li><strong>Usage data:</strong> What features are actually being used?</li>
+                            <li><strong>Discovery signals:</strong> What jobs are customers trying to do?</li>
+                        </ul>
+                    </div>
+                    <div class="audience-card">
+                        <h4>⚙️ Engineers</h4>
+                        <ul>
+                            <li><strong>Bug reports:</strong> Repro steps, severity, impact</li>
+                            <li><strong>Performance issues:</strong> Latency, reliability complaints</li>
+                            <li><strong>Technical requests:</strong> API changes, SDK features</li>
+                            <li><strong>Context:</strong> Why is this needed? What's the use case?</li>
+                            <li><strong>Customer impact:</strong> How many customers affected?</li>
+                        </ul>
+                    </div>
+                    <div class="audience-card">
+                        <h4>💼 Sales & Marketing</h4>
+                        <ul>
+                            <li><strong>Deal blockers:</strong> What's stopping prospects from buying?</li>
+                            <li><strong>Competitive gaps:</strong> Where do we lose to competitors?</li>
+                            <li><strong>Success stories:</strong> What's working well for customers?</li>
+                            <li><strong>Roadmap visibility:</strong> When is X feature coming?</li>
+                            <li><strong>Customer proof points:</strong> Quotes for case studies</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: #f0fdf4; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                    <strong style="color: #166534;">💡 Pro Tip:</strong>
+                    <span style="color: #15803d;">Create role-based Notion views or dashboards so each team sees only what's relevant to them.</span>
+                </div>
+            </div>
+
+            <!-- Segmentation Tab -->
+            <div id="segmentation" class="tab-content">
+                <h3 style="margin-bottom: 1rem;">Customer Segmentation Framework</h3>
+                <p style="color: #64748b; margin-bottom: 1.5rem;">Enterprise feedback needs to be sliced by multiple dimensions to surface patterns.</p>
+
+                <div class="segment-grid">
+                    <div class="segment-card">
+                        <h5>🏢 By Industry</h5>
+                        <div class="segment-tags">
+                            <span class="segment-tag">Financial Services</span>
+                            <span class="segment-tag">Healthcare</span>
+                            <span class="segment-tag">Technology</span>
+                            <span class="segment-tag">Manufacturing</span>
+                            <span class="segment-tag">Retail</span>
+                            <span class="segment-tag">Government</span>
+                        </div>
+                    </div>
+                    <div class="segment-card">
+                        <h5>📊 By Use Case</h5>
+                        <div class="segment-tags">
+                            <span class="segment-tag">Code Generation</span>
+                            <span class="segment-tag">Customer Support</span>
+                            <span class="segment-tag">Document Analysis</span>
+                            <span class="segment-tag">Data Extraction</span>
+                            <span class="segment-tag">Internal Tools</span>
+                            <span class="segment-tag">Research</span>
+                        </div>
+                    </div>
+                    <div class="segment-card">
+                        <h5>🌍 By Region</h5>
+                        <div class="segment-tags">
+                            <span class="segment-tag">North America</span>
+                            <span class="segment-tag">Europe (GDPR)</span>
+                            <span class="segment-tag">UK</span>
+                            <span class="segment-tag">APAC</span>
+                            <span class="segment-tag">LATAM</span>
+                            <span class="segment-tag">Middle East</span>
+                        </div>
+                    </div>
+                    <div class="segment-card">
+                        <h5>🗣️ By Language</h5>
+                        <div class="segment-tags">
+                            <span class="segment-tag">English</span>
+                            <span class="segment-tag">French</span>
+                            <span class="segment-tag">German</span>
+                            <span class="segment-tag">Spanish</span>
+                            <span class="segment-tag">Japanese</span>
+                            <span class="segment-tag">Mandarin</span>
+                        </div>
+                    </div>
+                    <div class="segment-card">
+                        <h5>💰 By Tier</h5>
+                        <div class="segment-tags">
+                            <span class="segment-tag">Enterprise ($100k+)</span>
+                            <span class="segment-tag">Mid-Market</span>
+                            <span class="segment-tag">Startup</span>
+                            <span class="segment-tag">Strategic Partner</span>
+                        </div>
+                    </div>
+                    <div class="segment-card">
+                        <h5>📈 By Lifecycle</h5>
+                        <div class="segment-tags">
+                            <span class="segment-tag">Prospect</span>
+                            <span class="segment-tag">Onboarding</span>
+                            <span class="segment-tag">Active</span>
+                            <span class="segment-tag">At-Risk</span>
+                            <span class="segment-tag">Churned</span>
+                            <span class="segment-tag">Expansion</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #fef3c7; padding: 1rem; border-radius: 8px; margin-top: 1.5rem;">
+                    <strong style="color: #92400e;">Why Segmentation Matters:</strong>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem; color: #a16207;">
+                        <li>"We need better latency" from a trading firm vs a marketing agency means very different things</li>
+                        <li>GDPR region customers have different compliance needs</li>
+                        <li>Strategic partners deserve faster response times</li>
+                        <li>Patterns within segments reveal product opportunities</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Categories Tab -->
+            <div id="categories" class="tab-content">
+                <h3 style="margin-bottom: 1rem;">Feedback Taxonomy</h3>
+                <p style="color: #64748b; margin-bottom: 1.5rem;">Not all feedback is equal. Categorize to prioritize.</p>
+
+                <div class="category-grid">
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon feedback">💬</div>
+                            <div class="category-title">General Feedback</div>
+                        </div>
+                        <p class="category-desc">Opinions, impressions, and suggestions that don't fit other categories.</p>
+                        <div class="category-uses">
+                            <strong>Use for:</strong> Understanding sentiment, identifying themes, spotting opportunities
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon requests">✨</div>
+                            <div class="category-title">Feature Requests</div>
+                        </div>
+                        <p class="category-desc">Specific asks for new capabilities or enhancements.</p>
+                        <div class="category-uses">
+                            <strong>Use for:</strong> Roadmap planning, prioritization, understanding demand
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon bugs">🐛</div>
+                            <div class="category-title">Bugs & Issues</div>
+                        </div>
+                        <p class="category-desc">Things that are broken, not working as expected, or causing errors.</p>
+                        <div class="category-uses">
+                            <strong>Use for:</strong> Immediate triage, quality improvement, reliability tracking
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon pain">😤</div>
+                            <div class="category-title">Pain Points</div>
+                        </div>
+                        <p class="category-desc">Friction, frustration, or difficulty—even if technically "working."</p>
+                        <div class="category-uses">
+                            <strong>Use for:</strong> UX improvements, reducing churn, competitive advantage
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon not-working">📉</div>
+                            <div class="category-title">Behavioral: Not Working</div>
+                        </div>
+                        <p class="category-desc">Usage data showing features aren't being adopted, or customers are struggling.</p>
+                        <div class="category-uses">
+                            <strong>Use for:</strong> Identifying failed features, onboarding gaps, churn prediction
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon working">📈</div>
+                            <div class="category-title">Behavioral: Working</div>
+                        </div>
+                        <p class="category-desc">Usage data showing high engagement, retention, or expansion.</p>
+                        <div class="category-uses">
+                            <strong>Use for:</strong> Doubling down, case studies, pricing decisions, what to protect
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">
+                    <h4 style="color: #0369a1; margin-bottom: 1rem;">When Each Category Matters Most</h4>
+                    <table style="width: 100%; font-size: 0.875rem;">
+                        <tr style="border-bottom: 1px solid #bae6fd;">
+                            <td style="padding: 0.5rem 0; font-weight: 600; color: #0c4a6e;">Early Stage / New Product</td>
+                            <td style="padding: 0.5rem 0; color: #0369a1;">Pain Points, Feature Requests, Behavioral: Not Working</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #bae6fd;">
+                            <td style="padding: 0.5rem 0; font-weight: 600; color: #0c4a6e;">Growth / Scaling</td>
+                            <td style="padding: 0.5rem 0; color: #0369a1;">Behavioral: Working, Feature Requests, General Feedback</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #bae6fd;">
+                            <td style="padding: 0.5rem 0; font-weight: 600; color: #0c4a6e;">Mature / Retention Focus</td>
+                            <td style="padding: 0.5rem 0; color: #0369a1;">Bugs, Pain Points, Behavioral: Not Working (churn signals)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem 0; font-weight: 600; color: #0c4a6e;">Deciding What to Kill</td>
+                            <td style="padding: 0.5rem 0; color: #0369a1;">Behavioral: Not Working + low Feature Requests = candidate to sunset</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Products Tab -->
+            <div id="products" class="tab-content">
+                <h3 style="margin-bottom: 1rem;">Feedback by Model & Product</h3>
+                <p style="color: #64748b; margin-bottom: 1.5rem;">Track feedback separately for different offerings to spot model-specific issues and opportunities.</p>
+
+                <div class="matrix-container">
+                    <table class="matrix-table">
+                        <thead>
+                            <tr>
+                                <th>Product / Model</th>
+                                <th>Key Metrics to Track</th>
+                                <th>Common Feedback Themes</th>
+                                <th>Priority Signals</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Mistral Large</td>
+                                <td>Accuracy, reasoning, context length usage</td>
+                                <td>Complex reasoning tasks, enterprise use cases</td>
+                                <td class="priority-high">High - flagship model</td>
+                            </tr>
+                            <tr>
+                                <td>Mistral Medium</td>
+                                <td>Latency, cost-performance ratio</td>
+                                <td>Balance of speed and quality</td>
+                                <td class="priority-medium">Medium</td>
+                            </tr>
+                            <tr>
+                                <td>Mistral Small</td>
+                                <td>Speed, cost efficiency, edge cases</td>
+                                <td>High-volume, low-latency use cases</td>
+                                <td class="priority-medium">Medium</td>
+                            </tr>
+                            <tr>
+                                <td>Codestral</td>
+                                <td>Code accuracy, language support, IDE integration</td>
+                                <td>Specific language issues, IDE bugs</td>
+                                <td class="priority-high">High - developer focus</td>
+                            </tr>
+                            <tr>
+                                <td>Le Chat</td>
+                                <td>UX, conversation quality, feature adoption</td>
+                                <td>Consumer-style feedback, feature requests</td>
+                                <td class="priority-medium">Medium</td>
+                            </tr>
+                            <tr>
+                                <td>La Plateforme (API)</td>
+                                <td>Uptime, latency, SDK quality, docs</td>
+                                <td>Developer experience, API design</td>
+                                <td class="priority-high">High - revenue driver</td>
+                            </tr>
+                            <tr>
+                                <td>Open Weight Models</td>
+                                <td>Download volume, community issues, deployment success</td>
+                                <td>Self-hosting challenges, fine-tuning needs</td>
+                                <td class="priority-medium">Medium - community</td>
+                            </tr>
+                            <tr>
+                                <td style="background: #fef3c7;">Beta Programs</td>
+                                <td>Adoption, feedback velocity, willingness to pay</td>
+                                <td>Product-market fit signals</td>
+                                <td class="priority-high">High - future roadmap</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                    <h4 style="margin-bottom: 0.75rem;">Tagging Strategy</h4>
+                    <p style="font-size: 0.875rem; color: #64748b;">Every piece of feedback should be tagged with:</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem;">
+                        <span class="tool-badge" style="background: #e2e8f0; color: #475569;">Model: [name]</span>
+                        <span class="tool-badge" style="background: #e2e8f0; color: #475569;">Product: [name]</span>
+                        <span class="tool-badge" style="background: #e2e8f0; color: #475569;">Category: [type]</span>
+                        <span class="tool-badge" style="background: #e2e8f0; color: #475569;">Segment: [industry]</span>
+                        <span class="tool-badge" style="background: #e2e8f0; color: #475569;">Source: [channel]</span>
+                        <span class="tool-badge" style="background: #e2e8f0; color: #475569;">ARR: [$value]</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Automation Tab -->
+            <div id="automation" class="tab-content">
+                <h3 style="margin-bottom: 1rem;">Automation Opportunities</h3>
+                <p style="color: #64748b; margin-bottom: 1.5rem;">Where to implement automations using the current tech stack.</p>
+
+                <table class="automation-table">
+                    <thead>
+                        <tr>
+                            <th>Touchpoint</th>
+                            <th>Tools</th>
+                            <th>Automation</th>
+                            <th>Output</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Sales Calls</strong><br><span style="color: #64748b; font-size: 0.8rem;">Granola transcripts</span></td>
+                            <td>
+                                <span class="tool-badge slack">Slack</span>
+                                <span class="tool-badge notion">Notion</span>
+                                <span class="tool-badge ai">AI</span>
+                            </td>
+                            <td>
+                                AI extracts: feature requests, objections, competitor mentions<br>
+                                Auto-posts to #product-feedback Slack<br>
+                                Creates Notion entries with tags
+                            </td>
+                            <td>Structured feedback in Notion, real-time Slack alerts</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Support Tickets</strong><br><span style="color: #64748b; font-size: 0.8rem;">Intercom, email</span></td>
+                            <td>
+                                <span class="tool-badge salesforce">Salesforce</span>
+                                <span class="tool-badge linear">Linear</span>
+                                <span class="tool-badge ai">AI</span>
+                            </td>
+                            <td>
+                                AI categorizes: bug vs feature vs question<br>
+                                Bugs auto-create Linear issues<br>
+                                Syncs to Salesforce account record
+                            </td>
+                            <td>Bugs in Linear, patterns visible in Salesforce</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Slack Conversations</strong><br><span style="color: #64748b; font-size: 0.8rem;">#customer-xyz channels</span></td>
+                            <td>
+                                <span class="tool-badge slack">Slack</span>
+                                <span class="tool-badge notion">Notion</span>
+                                <span class="tool-badge ai">AI</span>
+                            </td>
+                            <td>
+                                Emoji reactions (🐛 📣 💡) trigger capture<br>
+                                Weekly AI digest of key themes<br>
+                                Auto-link to customer Notion page
+                            </td>
+                            <td>No feedback lost, weekly summaries</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Usage Analytics</strong><br><span style="color: #64748b; font-size: 0.8rem;">Product telemetry</span></td>
+                            <td>
+                                <span class="tool-badge google">Google</span>
+                                <span class="tool-badge notion">Notion</span>
+                                <span class="tool-badge ai">AI</span>
+                            </td>
+                            <td>
+                                Weekly automated usage reports per customer<br>
+                                Alert on usage drops > 20%<br>
+                                Flag accounts with no activity in 14 days
+                            </td>
+                            <td>Churn alerts, health scores, adoption tracking</td>
+                        </tr>
+                        <tr>
+                            <td><strong>NPS/Surveys</strong><br><span style="color: #64748b; font-size: 0.8rem;">Typeform, in-app</span></td>
+                            <td>
+                                <span class="tool-badge notion">Notion</span>
+                                <span class="tool-badge slack">Slack</span>
+                                <span class="tool-badge ai">AI</span>
+                            </td>
+                            <td>
+                                Responses auto-tagged and stored<br>
+                                Detractors trigger CS alert<br>
+                                AI summarizes open-text weekly
+                            </td>
+                            <td>Sentiment trends, at-risk alerts</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GitHub Issues</strong><br><span style="color: #64748b; font-size: 0.8rem;">Open source repos</span></td>
+                            <td>
+                                <span class="tool-badge github">GitHub</span>
+                                <span class="tool-badge linear">Linear</span>
+                                <span class="tool-badge ai">AI</span>
+                            </td>
+                            <td>
+                                AI labels incoming issues<br>
+                                High-priority auto-creates Linear ticket<br>
+                                Weekly community feedback digest
+                            </td>
+                            <td>Community voice in roadmap</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Closing the Loop</strong><br><span style="color: #64748b; font-size: 0.8rem;">Back to customers</span></td>
+                            <td>
+                                <span class="tool-badge linear">Linear</span>
+                                <span class="tool-badge slack">Slack</span>
+                                <span class="tool-badge salesforce">Salesforce</span>
+                            </td>
+                            <td>
+                                When Linear issue closes → auto-notify requesters<br>
+                                Changelog entries auto-post to customer Slack<br>
+                                CS sees "feedback addressed" in Salesforce
+                            </td>
+                            <td>Customers know their voice was heard</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="background: #ecfdf5; padding: 1rem; border-radius: 8px; margin-top: 1.5rem;">
+                    <h4 style="color: #065f46; margin-bottom: 0.75rem;">⚡ Quick Wins (Low Effort, High Impact)</h4>
+                    <ol style="margin-left: 1.5rem; color: #047857; font-size: 0.875rem;">
+                        <li><strong>Slack emoji reactions</strong> → Notion (use Zapier, takes 30 mins to set up)</li>
+                        <li><strong>Weekly AI digest</strong> of customer Slack channels (copy/paste into Claude, 10 mins/week)</li>
+                        <li><strong>Linear status changes</strong> → customer Slack notification (native integration)</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div id="implementation" class="tab-content">
+                <h3 style="margin-bottom: 1rem;">Implementation Playbook</h3>
+                <p style="color: #64748b; margin-bottom: 1.5rem;">How to roll this out and get buy-in from stakeholders.</p>
+
+                <div class="implementation-steps">
+                    <div class="impl-step">
+                        <div class="impl-step-number">1</div>
+                        <div class="impl-step-content">
+                            <h4>Start with Pain, Not Process</h4>
+                            <p>Don't pitch "a new feedback system." Instead, find the pain: "We lost a $500k deal because we didn't know 3 other customers wanted the same feature." Lead with the problem.</p>
+                            <div class="impl-stakeholders">
+                                <span class="stakeholder-tag">Sales Leader</span>
+                                <span class="stakeholder-tag">Head of Product</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="impl-step">
+                        <div class="impl-step-number">2</div>
+                        <div class="impl-step-content">
+                            <h4>Pilot with One High-Value Account</h4>
+                            <p>Pick your most strategic customer. Set up the full loop just for them: capture → triage → build → communicate. Prove it works before scaling.</p>
+                            <div class="impl-stakeholders">
+                                <span class="stakeholder-tag">Account Team</span>
+                                <span class="stakeholder-tag">Product Manager</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="impl-step">
+                        <div class="impl-step-number">3</div>
+                        <div class="impl-step-content">
+                            <h4>Make Capture Effortless</h4>
+                            <p>If it takes more than 30 seconds to log feedback, people won't do it. Use Slack emoji reactions, auto-capture from calls, or a simple /feedback command. Remove all friction.</p>
+                            <div class="impl-stakeholders">
+                                <span class="stakeholder-tag">All GTM Team</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="impl-step">
+                        <div class="impl-step-number">4</div>
+                        <div class="impl-step-content">
+                            <h4>Weekly "Voice of Customer" Ritual</h4>
+                            <p>15-minute weekly meeting where PM shares top feedback themes. Invite Sales/CS. Make it a habit. This creates demand for the system.</p>
+                            <div class="impl-stakeholders">
+                                <span class="stakeholder-tag">Product Team</span>
+                                <span class="stakeholder-tag">Sales Leadership</span>
+                                <span class="stakeholder-tag">CS Leadership</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="impl-step">
+                        <div class="impl-step-number">5</div>
+                        <div class="impl-step-content">
+                            <h4>Close the Loop Visibly</h4>
+                            <p>When you ship something a customer asked for, make a big deal of it. Post in their Slack, have the AE send a personal note. This is the incentive for everyone to participate.</p>
+                            <div class="impl-stakeholders">
+                                <span class="stakeholder-tag">Product Marketing</span>
+                                <span class="stakeholder-tag">Account Teams</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="impl-step">
+                        <div class="impl-step-number">6</div>
+                        <div class="impl-step-content">
+                            <h4>Measure and Share Impact</h4>
+                            <p>Track: time from feedback to ship, NPS changes, expansion revenue from "you asked, we built." Share wins monthly. Nothing ensures adoption like proving ROI.</p>
+                            <div class="impl-stakeholders">
+                                <span class="stakeholder-tag">Product Ops</span>
+                                <span class="stakeholder-tag">Leadership</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">
+                    <h4 style="color: #92400e; margin-bottom: 0.75rem;">🚨 Common Failure Modes</h4>
+                    <ul style="margin-left: 1.5rem; color: #a16207; font-size: 0.875rem;">
+                        <li><strong>Over-engineering:</strong> Don't build a complex system before proving the process works manually</li>
+                        <li><strong>No ownership:</strong> Someone (Product Ops?) needs to own the system, or it will decay</li>
+                        <li><strong>All capture, no action:</strong> If feedback goes into a black hole, people stop contributing</li>
+                        <li><strong>No exec sponsor:</strong> Without leadership buy-in, Sales won't prioritize logging feedback</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Discovery Tab -->
+            <div id="discovery" class="tab-content">
+                <h3 style="margin-bottom: 1rem;">Product Discovery Tools & Processes</h3>
+                <p style="color: #64748b; margin-bottom: 1.5rem;">Supporting Product Managers in understanding what to build next.</p>
+
+                <div class="discovery-grid">
+                    <div class="discovery-card">
+                        <h4>🎯 Jobs-to-be-Done Interviews</h4>
+                        <p>Go beyond feature requests to understand the underlying job customers are trying to accomplish.</p>
+                        <ul>
+                            <li>When did you first realize you needed this?</li>
+                            <li>What were you doing before?</li>
+                            <li>What would success look like?</li>
+                        </ul>
+                    </div>
+                    <div class="discovery-card">
+                        <h4>📊 Usage Analytics Deep Dives</h4>
+                        <p>Let behavior tell you what words can't. Look for patterns in what customers actually do.</p>
+                        <ul>
+                            <li>Power users: what do they do differently?</li>
+                            <li>Drop-off points: where do people get stuck?</li>
+                            <li>Feature adoption: what's used vs ignored?</li>
+                        </ul>
+                    </div>
+                    <div class="discovery-card">
+                        <h4>🏆 Win/Loss Analysis</h4>
+                        <p>Interview customers who chose you AND those who didn't. The gaps reveal opportunities.</p>
+                        <ul>
+                            <li>What tipped the decision?</li>
+                            <li>What did competitors offer that we didn't?</li>
+                            <li>What almost made you choose differently?</li>
+                        </ul>
+                    </div>
+                    <div class="discovery-card">
+                        <h4>🔬 Design Partners (Beta Programs)</h4>
+                        <p>Co-develop with a small group of customers who have the problem you're solving.</p>
+                        <ul>
+                            <li>5-8 customers, not too many</li>
+                            <li>Weekly check-ins, not monthly</li>
+                            <li>Ship to them first, iterate fast</li>
+                        </ul>
+                    </div>
+                    <div class="discovery-card">
+                        <h4>🌐 Community Listening</h4>
+                        <p>Monitor where your users hang out: Reddit, HN, Discord, X, LinkedIn.</p>
+                        <ul>
+                            <li>r/LocalLLaMA, r/MachineLearning</li>
+                            <li>HuggingFace discussions</li>
+                            <li>Developer Discord servers</li>
+                        </ul>
+                    </div>
+                    <div class="discovery-card">
+                        <h4>📝 Assumption Testing</h4>
+                        <p>Before building, identify and test your riskiest assumptions.</p>
+                        <ul>
+                            <li>What must be true for this to work?</li>
+                            <li>How can we test this in 1 week?</li>
+                            <li>What's the cheapest way to learn?</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">
+                    <h4 style="color: #0369a1; margin-bottom: 1rem;">📅 Suggested PM Discovery Rhythm</h4>
+                    <table style="width: 100%; font-size: 0.875rem;">
+                        <tr style="border-bottom: 1px solid #bae6fd;">
+                            <td style="padding: 0.5rem 0; font-weight: 600; width: 100px;">Daily</td>
+                            <td style="padding: 0.5rem 0; color: #0369a1;">Skim #product-feedback Slack, check Linear for customer-reported issues</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #bae6fd;">
+                            <td style="padding: 0.5rem 0; font-weight: 600;">Weekly</td>
+                            <td style="padding: 0.5rem 0; color: #0369a1;">1 customer interview, review usage analytics, "Voice of Customer" meeting</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #bae6fd;">
+                            <td style="padding: 0.5rem 0; font-weight: 600;">Monthly</td>
+                            <td style="padding: 0.5rem 0; color: #0369a1;">Win/loss analysis review, community sentiment scan, feedback theme report</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem 0; font-weight: 600;">Quarterly</td>
+                            <td style="padding: 0.5rem 0; color: #0369a1;">Deep dive on one strategic problem, customer advisory board (if applicable)</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Targeted Collection Tab -->
+            <div id="targeted" class="tab-content">
+                <h3 style="margin-bottom: 1rem;">Targeted Feedback Collection</h3>
+                <p style="color: #64748b; margin-bottom: 1.5rem;">Don't survey everyone together. You'll mix yesterday's sign-ups with lifelong customers, daily users with billing-only visitors. The result is noise, not signal.</p>
+
+                <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h4 style="color: #dc2626; margin-bottom: 0.75rem;">❌ The Mistake</h4>
+                    <p style="color: #7f1d1d;">Survey all users → Get averaged-out, contradictory feedback → Build features that half-satisfy everyone and fully satisfy no one.</p>
+                </div>
+
+                <div style="background: #ecfdf5; border: 1px solid #a7f3d0; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h4 style="color: #059669; margin-bottom: 0.75rem;">✅ The Solution</h4>
+                    <p style="color: #065f46;">Segment users by behavior, then ask targeted questions to the right cohort.</p>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">Who to Ask, When</h4>
+                <table class="automation-table" style="margin-bottom: 2rem;">
+                    <thead>
+                        <tr>
+                            <th>If You Want To...</th>
+                            <th>Talk To...</th>
+                            <th>Why</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Improve onboarding</strong></td>
+                            <td>Users who signed up in last 14 days</td>
+                            <td>They remember the experience; long-term users have forgotten the friction</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Improve a feature</strong></td>
+                            <td>Heavy users of that specific feature</td>
+                            <td>They know it best and have the most opinions on how to make it better</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Understand why feature isn't used</strong></td>
+                            <td>Active users who don't use that feature</td>
+                            <td>They're engaged enough to use the product but something's stopping them</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Find areas of concern</strong></td>
+                            <td>Power users who use all features</td>
+                            <td>They see the full picture and can identify gaps</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Reduce churn</strong></td>
+                            <td>Users whose usage has dropped 30%+ in 30 days</td>
+                            <td>They're on their way out—find out why before they're gone</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Expand use cases</strong></td>
+                            <td>Customers who recently expanded/upgraded</td>
+                            <td>They found new value—understand what unlocked it</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Understand stickiness</strong></td>
+                            <td>Customers with 12+ months tenure, still active</td>
+                            <td>They're loyalists—what keeps them here?</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Kill a feature</strong></td>
+                            <td>The few remaining users of that feature</td>
+                            <td>Are they truly dependent, or just haven't switched to the alternative?</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin-bottom: 1rem;">Feedback Maturity: Time-Based + Usage-Based</h4>
+                <p style="color: #64748b; margin-bottom: 1rem;">As users get more experience, their feedback matures. Early feedback explains confusion. Later feedback explains limitations.</p>
+
+                <div class="segment-grid" style="margin-bottom: 2rem;">
+                    <div class="segment-card" style="grid-column: span 2;">
+                        <h5>📅 Time-Based Milestones</h5>
+                        <table style="width: 100%; font-size: 0.8rem; margin-top: 0.5rem;">
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.5rem 0; font-weight: 600; width: 80px;">Day 7</td>
+                                <td style="padding: 0.5rem 0; color: #64748b;">First impressions—what's confusing? What's broken?</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.5rem 0; font-weight: 600;">Day 30</td>
+                                <td style="padding: 0.5rem 0; color: #64748b;">Starting to form habits—what's working, what's frustrating?</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.5rem 0; font-weight: 600;">Day 60</td>
+                                <td style="padding: 0.5rem 0; color: #64748b;">Becoming proficient—what's limiting their productivity?</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.5rem 0; font-weight: 600;">Day 120</td>
+                                <td style="padding: 0.5rem 0; color: #64748b;">Power user territory—what advanced features are missing?</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.5rem 0; font-weight: 600;">Day 365+</td>
+                                <td style="padding: 0.5rem 0; color: #64748b;">Strategic perspective—what keeps them here vs. alternatives?</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="segment-card" style="grid-column: span 2;">
+                        <h5>🔢 Usage-Based Milestones (per feature)</h5>
+                        <table style="width: 100%; font-size: 0.8rem; margin-top: 0.5rem;">
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.5rem 0; font-weight: 600; width: 100px;">1st use</td>
+                                <td style="padding: 0.5rem 0; color: #64748b;">First impressions—is it obvious what this does?</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.5rem 0; font-weight: 600;">5th use</td>
+                                <td style="padding: 0.5rem 0; color: #64748b;">Early adoption—what's the learning curve?</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.5rem 0; font-weight: 600;">20th use</td>
+                                <td style="padding: 0.5rem 0; color: #64748b;">Daily frustrations—what slows them down repeatedly?</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.5rem 0; font-weight: 600;">50th use</td>
+                                <td style="padding: 0.5rem 0; color: #64748b;">Hitting limits—what's the ceiling on this feature?</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h4 style="color: #dc2626; margin-bottom: 0.75rem;">❌ Why Surveys Don't Work</h4>
+                    <ul style="margin-left: 1.5rem; color: #7f1d1d; font-size: 0.875rem;">
+                        <li>Low response rates from busy enterprise users</li>
+                        <li>Answers are sanitized and polite, not honest</li>
+                        <li>They interrupt the user's flow</li>
+                        <li>Users tell you what they think you want to hear</li>
+                    </ul>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">✅ Organic Collection: Where Customers Already Tell You</h4>
+                <p style="color: #64748b; margin-bottom: 1rem;">Customers are constantly sharing feedback—just not in survey form. Capture it where they naturally express it.</p>
+
+                <div class="category-grid" style="margin-bottom: 2rem;">
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #dbeafe;">💬</div>
+                            <div class="category-title">Shared Slack Channels</div>
+                        </div>
+                        <p class="category-desc">Enterprise customers often have a #mistral-support or similar channel. Every message is unfiltered feedback.</p>
+                        <div class="category-uses">
+                            <strong>Capture:</strong> AI summarizes weekly; emoji reactions (🐛📣💡) trigger logging
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #dcfce7;">📞</div>
+                            <div class="category-title">Sales & CS Call Notes</div>
+                        </div>
+                        <p class="category-desc">Granola transcripts, meeting notes, QBR decks. Customers speak freely in conversations.</p>
+                        <div class="category-uses">
+                            <strong>Capture:</strong> AI extracts feature requests, objections, praise from transcripts
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #fee2e2;">🚨</div>
+                            <div class="category-title">Error Moments in Product</div>
+                        </div>
+                        <p class="category-desc">When something fails, capture what they were trying to do. The error state IS the feedback moment.</p>
+                        <div class="category-uses">
+                            <strong>Capture:</strong> Error page asks "What were you trying to do?" (one text field)
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #fef3c7;">📧</div>
+                            <div class="category-title">Support Tickets</div>
+                        </div>
+                        <p class="category-desc">Every ticket is a complaint or request. Tag and aggregate to see patterns.</p>
+                        <div class="category-uses">
+                            <strong>Capture:</strong> AI auto-categorizes; themes roll up to weekly digest
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #e0e7ff;">💰</div>
+                            <div class="category-title">Renewal & Expansion Conversations</div>
+                        </div>
+                        <p class="category-desc">When money's on the table, customers are honest about what they need to stay/grow.</p>
+                        <div class="category-uses">
+                            <strong>Capture:</strong> Structured fields in Salesforce for blockers, wants, wins
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #fce7f3;">📉</div>
+                            <div class="category-title">Behavior = Silent Feedback</div>
+                        </div>
+                        <p class="category-desc">Usage drops, feature abandonment, login gaps. They're telling you without words.</p>
+                        <div class="category-uses">
+                            <strong>Capture:</strong> Automated alerts on behavior changes; triggers CS outreach
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px;">
+                    <h4 style="color: #065f46; margin-bottom: 0.75rem;">💡 The Best "Survey" Is Part of the Product</h4>
+                    <ul style="margin-left: 1.5rem; color: #047857; font-size: 0.875rem;">
+                        <li><strong>Feedback button in context:</strong> Small "Feedback on this feature?" link on every page—not a popup, just there if they want it</li>
+                        <li><strong>After task completion:</strong> Optional thumbs up/down—"Did this work as expected?"</li>
+                        <li><strong>When they search and find nothing:</strong> Log the search query—this IS the feature request</li>
+                        <li><strong>On cancellation:</strong> Single open-text field—"What would have changed your mind?"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <p class="footer-note">
+            This framework is designed to be lightweight and practical.<br>
+            Start simple, prove value, then add complexity only where needed.
+        </p>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Add interactivity to flow nodes
+        document.querySelectorAll('.flow-node').forEach(node => {
+            node.addEventListener('click', () => {
+                const title = node.querySelector('.flow-node-title').textContent;
+                // Could expand to show more detail
+            });
+        });
+    </script>
+</body>
+</html>
