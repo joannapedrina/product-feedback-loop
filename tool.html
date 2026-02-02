@@ -3,1016 +3,607 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mistral Product Feedback Hub</title>
+    <title>Mistral Product Feedback Loop</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8fafc; color: #1e293b; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #f8fafc;
-            color: #1e293b;
-        }
-
-        /* Layout */
-        .app {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-            color: white;
-            padding: 1.5rem;
-        }
-
-        .logo {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
+        /* Top Navigation */
+        .top-nav {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 1rem 2rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 2rem;
         }
-
-        .logo-sub {
-            font-size: 0.75rem;
-            color: #f59e0b;
-            margin-bottom: 2rem;
-        }
-
-        .nav-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .nav-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #64748b;
-            margin-bottom: 0.75rem;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.6rem 0.75rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            color: #94a3b8;
-            transition: all 0.15s;
-        }
-
-        .nav-item:hover { background: #1e293b; color: white; }
-        .nav-item.active { background: #f59e0b; color: #0f172a; font-weight: 500; }
-
-        .nav-item .count {
-            margin-left: auto;
-            background: #334155;
-            padding: 0.125rem 0.5rem;
-            border-radius: 999px;
-            font-size: 0.7rem;
-        }
-
-        .nav-item.active .count { background: rgba(0,0,0,0.2); }
-
-        .nav-divider {
-            height: 1px;
-            background: #334155;
-            margin: 1rem 0;
-        }
-
-        /* Main Content */
-        .main {
-            padding: 1.5rem 2rem;
-            overflow-y: auto;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .header h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .btn {
+        .top-nav .logo { color: white; font-size: 1.25rem; font-weight: 700; }
+        .top-nav .logo span { color: #f59e0b; }
+        .top-tabs { display: flex; gap: 0.5rem; }
+        .top-tab {
             padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
+            background: transparent;
             border: none;
+            color: #94a3b8;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
             transition: all 0.15s;
         }
+        .top-tab:hover { background: rgba(255,255,255,0.1); color: white; }
+        .top-tab.active { background: #f59e0b; color: #0f172a; font-weight: 500; }
 
-        .btn-primary {
-            background: #f59e0b;
-            color: #0f172a;
-        }
+        /* Main Container */
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .section { display: none; }
+        .section.active { display: block; }
 
-        .btn-primary:hover { background: #d97706; }
+        /* Section Headers */
+        .section-header { margin-bottom: 1.5rem; }
+        .section-header h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+        .section-header p { color: #64748b; }
 
-        .btn-secondary {
-            background: white;
-            border: 1px solid #e2e8f0;
-            color: #475569;
-        }
+        /* Cards */
+        .card { background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .card h3 { font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
 
-        .btn-secondary:hover { background: #f8fafc; }
+        /* Flow Diagram */
+        .flow-container { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 2rem; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 12px; margin-bottom: 2rem; flex-wrap: wrap; }
+        .flow-node { background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; text-align: center; min-width: 150px; flex: 1; }
+        .flow-node.customer { border-color: #10b981; background: #ecfdf5; }
+        .flow-node.gtm { border-color: #3b82f6; background: #eff6ff; }
+        .flow-node.product { border-color: #f59e0b; background: #fffbeb; }
+        .flow-node.engineering { border-color: #8b5cf6; background: #f5f3ff; }
+        .flow-node-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .flow-node-title { font-weight: 600; font-size: 0.875rem; }
+        .flow-node-tools { font-size: 0.7rem; color: #64748b; margin-top: 0.5rem; }
+        .flow-arrow { font-size: 1.5rem; color: #94a3b8; }
 
-        /* Stats Row */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
+        /* Grid layouts */
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        @media (max-width: 900px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
 
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1rem;
-            border: 1px solid #e2e8f0;
-        }
+        /* Automation Cards */
+        .auto-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; }
+        .auto-card h4 { font-size: 0.875rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+        .auto-card .trigger { background: #fef3c7; padding: 0.5rem; border-radius: 6px; font-size: 0.8rem; margin-bottom: 0.5rem; }
+        .auto-card .action { background: #dcfce7; padding: 0.5rem; border-radius: 6px; font-size: 0.8rem; }
+        .auto-card .tools { display: flex; gap: 0.25rem; margin-top: 0.75rem; flex-wrap: wrap; }
+        .tool-badge { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.65rem; font-weight: 500; }
+        .tool-badge.slack { background: #4A154B; color: white; }
+        .tool-badge.salesforce { background: #00A1E0; color: white; }
+        .tool-badge.notion { background: #000; color: white; }
+        .tool-badge.linear { background: #5E6AD2; color: white; }
+        .tool-badge.github { background: #24292e; color: white; }
+        .tool-badge.google { background: #4285F4; color: white; }
 
-        .stat-label {
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-bottom: 0.25rem;
-        }
+        /* Team View Cards */
+        .team-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+        .team-header { padding: 1rem; font-weight: 600; font-size: 0.875rem; }
+        .team-header.leadership { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+        .team-header.pm { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); }
+        .team-header.engineering { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); }
+        .team-header.sales { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); }
+        .team-body { padding: 1rem; }
+        .team-body ul { margin-left: 1rem; font-size: 0.8rem; color: #475569; }
+        .team-body li { margin-bottom: 0.5rem; }
 
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #0f172a;
-        }
-
-        .stat-change {
-            font-size: 0.75rem;
-            margin-top: 0.25rem;
-        }
-
-        .stat-change.up { color: #10b981; }
-        .stat-change.down { color: #ef4444; }
-        .stat-change.neutral { color: #64748b; }
-
-        /* Filters */
-        .filters {
-            display: flex;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .filter-label {
-            font-size: 0.75rem;
-            color: #64748b;
-        }
-
-        select {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            background: white;
-            cursor: pointer;
-        }
-
-        .search-box {
-            flex: 1;
-            min-width: 200px;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 0.875rem;
-        }
-
-        /* Coverage Alert */
-        .coverage-alert {
-            background: #fef3c7;
-            border: 1px solid #fcd34d;
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 0.8rem;
-        }
-
-        .coverage-alert strong { color: #92400e; }
-
-        .coverage-alert.good {
-            background: #ecfdf5;
-            border-color: #6ee7b7;
-        }
-
-        .coverage-alert.good strong { color: #065f46; }
+        /* Stats */
+        .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { background: white; border-radius: 12px; padding: 1rem; border: 1px solid #e2e8f0; }
+        .stat-label { font-size: 0.75rem; color: #64748b; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; }
 
         /* Feedback List */
-        .feedback-list {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
-        }
-
-        .feedback-header {
-            display: grid;
-            grid-template-columns: 1fr 130px 90px 90px 100px 70px;
-            padding: 0.75rem 1rem;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-
-        .feedback-item {
-            display: grid;
-            grid-template-columns: 1fr 130px 90px 90px 100px 70px;
-            padding: 0.875rem 1rem;
-            border-bottom: 1px solid #f1f5f9;
-            align-items: center;
-            cursor: pointer;
-            transition: background 0.1s;
-        }
-
+        .feedback-list { background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
+        .feedback-header { display: grid; grid-template-columns: 1fr 130px 90px 90px 100px 70px; padding: 0.75rem 1rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 0.7rem; font-weight: 600; color: #64748b; text-transform: uppercase; }
+        .feedback-item { display: grid; grid-template-columns: 1fr 130px 90px 90px 100px 70px; padding: 0.875rem 1rem; border-bottom: 1px solid #f1f5f9; align-items: center; cursor: pointer; }
         .feedback-item:hover { background: #fefce8; }
-
-        .feedback-content {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .feedback-quote {
-            font-size: 0.8rem;
-            color: #1e293b;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .feedback-meta {
-            font-size: 0.7rem;
-            color: #64748b;
-        }
-
-        .customer-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .customer-name {
-            font-weight: 500;
-            color: #0f172a;
-            font-size: 0.8rem;
-        }
-
-        .customer-detail {
-            font-size: 0.7rem;
-            color: #64748b;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
-
+        .feedback-quote { font-size: 0.8rem; color: #1e293b; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .feedback-meta { font-size: 0.7rem; color: #64748b; }
+        .customer-name { font-weight: 500; font-size: 0.8rem; }
+        .customer-detail { font-size: 0.7rem; color: #64748b; }
+        .tag { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 500; }
         .tag-request { background: #dcfce7; color: #166534; }
         .tag-bug { background: #fee2e2; color: #991b1b; }
         .tag-pain { background: #fef3c7; color: #92400e; }
-        .tag-praise { background: #dbeafe; color: #1e40af; }
         .tag-churn { background: #fce7f3; color: #9d174d; }
+        .tag-praise { background: #dbeafe; color: #1e40af; }
+        .model-tag { font-size: 0.7rem; padding: 0.2rem 0.5rem; background: #f1f5f9; border-radius: 4px; }
+        .lang-badge { padding: 0.15rem 0.4rem; background: #f1f5f9; border-radius: 3px; font-size: 0.65rem; color: #64748b; }
 
-        .source {
-            font-size: 0.75rem;
-            color: #64748b;
-        }
+        /* Discovery Tools */
+        .discovery-card { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fcd34d; border-radius: 12px; padding: 1.25rem; }
+        .discovery-card h4 { color: #92400e; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .discovery-card p { font-size: 0.8rem; color: #a16207; margin-bottom: 0.75rem; }
+        .discovery-card ul { margin-left: 1rem; font-size: 0.8rem; color: #92400e; }
 
-        .model-tag {
-            font-size: 0.7rem;
-            padding: 0.2rem 0.5rem;
-            background: #f1f5f9;
-            border-radius: 4px;
-            color: #475569;
-        }
+        /* Implementation Steps */
+        .impl-step { display: flex; gap: 1rem; padding: 1rem; background: #f8fafc; border-radius: 8px; margin-bottom: 0.75rem; }
+        .impl-num { width: 28px; height: 28px; background: #f59e0b; color: #0f172a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; }
+        .impl-content h4 { font-size: 0.875rem; margin-bottom: 0.25rem; }
+        .impl-content p { font-size: 0.8rem; color: #64748b; }
 
-        .model-tag.large { background: #fef3c7; color: #92400e; }
-        .model-tag.small { background: #dbeafe; color: #1e40af; }
-        .model-tag.codestral { background: #dcfce7; color: #166534; }
-        .model-tag.lechat { background: #f3e8ff; color: #7c3aed; }
-        .model-tag.pixtral { background: #fce7f3; color: #9d174d; }
-        .model-tag.api { background: #e0e7ff; color: #4338ca; }
-
-        .date {
-            font-size: 0.7rem;
-            color: #64748b;
-        }
-
-        /* Themes Panel */
-        .themes-panel {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .themes-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .themes-header h3 {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .theme-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            background: #f8fafc;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .theme-item:hover { background: #fefce8; }
-
-        .theme-bar {
-            width: 4px;
-            height: 40px;
-            border-radius: 2px;
-            margin-right: 1rem;
-        }
-
-        .theme-bar.hot { background: #ef4444; }
-        .theme-bar.warm { background: #f59e0b; }
-        .theme-bar.cool { background: #3b82f6; }
-
-        .theme-info { flex: 1; }
-
-        .theme-name {
-            font-weight: 500;
-            font-size: 0.875rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .theme-stats {
-            font-size: 0.75rem;
-            color: #64748b;
-        }
-
-        .theme-status {
-            font-size: 0.7rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            background: #f1f5f9;
-            color: #475569;
-        }
-
-        .theme-status.hypothesis { background: #fef3c7; color: #92400e; }
-        .theme-status.validated { background: #dcfce7; color: #166534; }
-        .theme-status.building { background: #dbeafe; color: #1e40af; }
-
-        /* Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-overlay.active { display: flex; }
-
-        .modal {
-            background: white;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 700px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-        }
-
-        .modal-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #64748b;
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-        }
-
-        .detail-row {
-            display: grid;
-            grid-template-columns: 120px 1fr;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-        }
-
-        .detail-label {
-            color: #64748b;
-            font-weight: 500;
-        }
-
-        .detail-value {
-            color: #1e293b;
-        }
-
-        .verbatim-box {
-            background: #f8fafc;
-            padding: 1rem;
-            border-radius: 8px;
-            font-style: italic;
-            color: #475569;
-            border-left: 3px solid #f59e0b;
-            margin: 1rem 0;
-        }
-
-        .modal-actions {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            gap: 0.75rem;
-            justify-content: flex-end;
-        }
-
-        .lang-badge {
-            display: inline-block;
-            padding: 0.15rem 0.4rem;
-            background: #f1f5f9;
-            border-radius: 3px;
-            font-size: 0.65rem;
-            color: #64748b;
-            margin-left: 0.5rem;
-        }
+        /* Coverage Alert */
+        .alert { padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.8rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .alert.warning { background: #fef3c7; border: 1px solid #fcd34d; }
+        .alert.warning strong { color: #92400e; }
     </style>
 </head>
 <body>
-    <div class="app">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="logo">📊 Mistral Feedback Hub</div>
-            <div class="logo-sub">Enterprise Voice of Customer</div>
-
-            <div class="nav-section">
-                <div class="nav-label">Categories</div>
-                <div class="nav-item active" onclick="setView('all')">
-                    📥 All Feedback <span class="count">52</span>
-                </div>
-                <div class="nav-item" onclick="setView('requests')">
-                    ✨ Feature Requests <span class="count">19</span>
-                </div>
-                <div class="nav-item" onclick="setView('bugs')">
-                    🐛 Bugs <span class="count">14</span>
-                </div>
-                <div class="nav-item" onclick="setView('pain')">
-                    😤 Pain Points <span class="count">11</span>
-                </div>
-                <div class="nav-item" onclick="setView('churn')">
-                    ⚠️ Churn Signals <span class="count">4</span>
-                </div>
-                <div class="nav-item" onclick="setView('praise')">
-                    💚 Praise <span class="count">4</span>
-                </div>
-            </div>
-
-            <div class="nav-divider"></div>
-
-            <div class="nav-section">
-                <div class="nav-label">Models</div>
-                <div class="nav-item" onclick="filterProduct('large')">
-                    🧠 Mistral Large <span class="count">16</span>
-                </div>
-                <div class="nav-item" onclick="filterProduct('small')">
-                    ⚡ Mistral Small <span class="count">9</span>
-                </div>
-                <div class="nav-item" onclick="filterProduct('codestral')">
-                    👨‍💻 Codestral <span class="count">12</span>
-                </div>
-                <div class="nav-item" onclick="filterProduct('pixtral')">
-                    🖼️ Pixtral <span class="count">5</span>
-                </div>
-                <div class="nav-item" onclick="filterProduct('embed')">
-                    📐 Mistral Embed <span class="count">3</span>
-                </div>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-label">Products</div>
-                <div class="nav-item" onclick="filterProduct('api')">
-                    🔌 La Plateforme <span class="count">28</span>
-                </div>
-                <div class="nav-item" onclick="filterProduct('lechat')">
-                    💬 Le Chat <span class="count">15</span>
-                </div>
-                <div class="nav-item" onclick="filterProduct('selfhost')">
-                    🏠 Self-Hosted <span class="count">9</span>
-                </div>
-            </div>
-
-            <div class="nav-divider"></div>
-
-            <div class="nav-section">
-                <div class="nav-label">🔥 Hot Themes</div>
-                <div class="nav-item" onclick="filterTheme('latency')">
-                    Latency (Large) <span class="count">8</span>
-                </div>
-                <div class="nav-item" onclick="filterTheme('multilingual')">
-                    Multilingual Quality <span class="count">7</span>
-                </div>
-                <div class="nav-item" onclick="filterTheme('context')">
-                    Context Window <span class="count">6</span>
-                </div>
-            </div>
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="logo">Mistral <span>Feedback Loop</span></div>
+        <div class="top-tabs">
+            <button class="top-tab active" onclick="showSection('dashboard')">📊 Dashboard</button>
+            <button class="top-tab" onclick="showSection('flow')">🔄 The Flow</button>
+            <button class="top-tab" onclick="showSection('automations')">⚡ Automations</button>
+            <button class="top-tab" onclick="showSection('teams')">👥 Team Views</button>
+            <button class="top-tab" onclick="showSection('discovery')">🔍 Discovery</button>
+            <button class="top-tab" onclick="showSection('adoption')">🚀 Adoption</button>
         </div>
+    </div>
 
-        <!-- Main Content -->
-        <div class="main">
-            <div class="header">
-                <h1>All Feedback</h1>
-                <div class="header-actions">
-                    <button class="btn btn-secondary">Export CSV</button>
-                    <button class="btn btn-primary" onclick="openAddModal()">+ Log Feedback</button>
-                </div>
+    <div class="container">
+        <!-- DASHBOARD SECTION -->
+        <div id="dashboard" class="section active">
+            <div class="section-header">
+                <h1>Feedback Dashboard</h1>
+                <p>Real-time view of enterprise customer feedback across all channels</p>
             </div>
 
-            <!-- Stats -->
             <div class="stats-row">
                 <div class="stat-card">
                     <div class="stat-label">This Week</div>
                     <div class="stat-value">27</div>
-                    <div class="stat-change up">↑ 23% vs last week</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Unique Customers</div>
                     <div class="stat-value">19</div>
-                    <div class="stat-change up">↑ 4 new voices</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">ARR at Risk</div>
                     <div class="stat-value">€890k</div>
-                    <div class="stat-change down">4 churn signals</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Themes Verified</div>
                     <div class="stat-value">2</div>
-                    <div class="stat-change neutral">this month</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Loop Closed</div>
                     <div class="stat-value">71%</div>
-                    <div class="stat-change up">↑ 8% improvement</div>
                 </div>
             </div>
 
-            <!-- Coverage Alert -->
-            <div class="coverage-alert">
-                ⚠️ <strong>Coverage gap:</strong> Only 2 data points from Healthcare (DACH region) this month. Pixtral feedback under-represented (5 items vs 15+ target).
+            <div class="alert warning">
+                ⚠️ <strong>Coverage gap:</strong> Only 2 data points from Healthcare (DACH) this month. Pixtral feedback under-represented.
             </div>
 
-            <!-- Filters -->
-            <div class="filters">
-                <input type="text" class="search-box" placeholder="Search feedback...">
-                <div class="filter-group">
-                    <span class="filter-label">Industry:</span>
-                    <select id="industryFilter">
-                        <option>All Industries</option>
-                        <option>Financial Services</option>
-                        <option>Healthcare / Life Sciences</option>
-                        <option>Legal / Professional Services</option>
-                        <option>Technology / SaaS</option>
-                        <option>Government / Public Sector</option>
-                        <option>Manufacturing</option>
-                        <option>Retail / E-commerce</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <span class="filter-label">Region:</span>
-                    <select id="regionFilter">
-                        <option>All Regions</option>
-                        <option>France</option>
-                        <option>DACH (DE/AT/CH)</option>
-                        <option>UK</option>
-                        <option>Nordics</option>
-                        <option>Southern Europe</option>
-                        <option>US</option>
-                        <option>APAC</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <span class="filter-label">Language:</span>
-                    <select id="langFilter">
-                        <option>All Languages</option>
-                        <option>English</option>
-                        <option>French</option>
-                        <option>German</option>
-                        <option>Spanish</option>
-                        <option>Italian</option>
-                        <option>Dutch</option>
-                        <option>Portuguese</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <span class="filter-label">Source:</span>
-                    <select id="sourceFilter">
-                        <option>All Sources</option>
-                        <option>Slack</option>
-                        <option>Sales Call (Granola)</option>
-                        <option>Support Ticket</option>
-                        <option>QBR / Renewal</option>
-                        <option>In-app</option>
-                        <option>GitHub Issue</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Feedback List -->
             <div class="feedback-list">
                 <div class="feedback-header">
-                    <span>Feedback</span>
-                    <span>Customer</span>
-                    <span>Category</span>
-                    <span>Source</span>
-                    <span>Model</span>
-                    <span>Date</span>
+                    <span>Feedback</span><span>Customer</span><span>Category</span><span>Source</span><span>Model</span><span>Date</span>
                 </div>
-
-                <div class="feedback-item" onclick="openDetail(1)">
-                    <div class="feedback-content">
-                        <div class="feedback-quote">"La latence sur Mistral Large nous tue. On voit 3-4 secondes en production. Nos utilisateurs se plaignent."</div>
-                        <div class="feedback-meta">Theme: Latency Issues • €420k ARR <span class="lang-badge">FR</span></div>
-                    </div>
-                    <div class="customer-info">
-                        <div class="customer-name">BNP Paribas</div>
-                        <div class="customer-detail">Finance • France</div>
-                    </div>
+                <div class="feedback-item">
+                    <div><div class="feedback-quote">"La latence sur Mistral Large nous tue. On voit 3-4 secondes en production."</div><div class="feedback-meta">Theme: Latency • €420k ARR <span class="lang-badge">FR</span></div></div>
+                    <div><div class="customer-name">BNP Paribas</div><div class="customer-detail">Finance • France</div></div>
                     <div><span class="tag tag-pain">Pain Point</span></div>
-                    <div class="source">Slack</div>
-                    <div><span class="model-tag large">Large</span></div>
-                    <div class="date">2h ago</div>
+                    <div class="feedback-meta">Slack</div>
+                    <div><span class="model-tag">Large</span></div>
+                    <div class="feedback-meta">2h ago</div>
                 </div>
-
-                <div class="feedback-item" onclick="openDetail(2)">
-                    <div class="feedback-content">
-                        <div class="feedback-quote">"Function calling with streaming would be huge for our real-time trading assistant. Right now we buffer everything."</div>
-                        <div class="feedback-meta">Theme: API Features • €280k ARR <span class="lang-badge">EN</span></div>
-                    </div>
-                    <div class="customer-info">
-                        <div class="customer-name">Revolut</div>
-                        <div class="customer-detail">Fintech • UK</div>
-                    </div>
+                <div class="feedback-item">
+                    <div><div class="feedback-quote">"Function calling with streaming would be huge for our trading assistant."</div><div class="feedback-meta">Theme: API Features • €280k ARR <span class="lang-badge">EN</span></div></div>
+                    <div><div class="customer-name">Revolut</div><div class="customer-detail">Fintech • UK</div></div>
                     <div><span class="tag tag-request">Request</span></div>
-                    <div class="source">Sales Call</div>
-                    <div><span class="model-tag api">API</span></div>
-                    <div class="date">4h ago</div>
+                    <div class="feedback-meta">Granola</div>
+                    <div><span class="model-tag">API</span></div>
+                    <div class="feedback-meta">4h ago</div>
                 </div>
-
-                <div class="feedback-item" onclick="openDetail(3)">
-                    <div class="feedback-content">
-                        <div class="feedback-quote">"Die deutsche Sprachqualität hat sich verschlechtert seit dem letzten Update. Grammatikfehler in formellen Dokumenten."</div>
-                        <div class="feedback-meta">Theme: Multilingual Quality • €180k ARR <span class="lang-badge">DE</span></div>
-                    </div>
-                    <div class="customer-info">
-                        <div class="customer-name">Siemens</div>
-                        <div class="customer-detail">Manufacturing • DACH</div>
-                    </div>
+                <div class="feedback-item">
+                    <div><div class="feedback-quote">"Die deutsche Sprachqualität hat sich verschlechtert seit dem letzten Update."</div><div class="feedback-meta">Theme: Multilingual • €180k ARR <span class="lang-badge">DE</span></div></div>
+                    <div><div class="customer-name">Siemens</div><div class="customer-detail">Manufacturing • DACH</div></div>
                     <div><span class="tag tag-bug">Bug</span></div>
-                    <div class="source">Support</div>
-                    <div><span class="model-tag large">Large</span></div>
-                    <div class="date">6h ago</div>
+                    <div class="feedback-meta">Support</div>
+                    <div><span class="model-tag">Large</span></div>
+                    <div class="feedback-meta">6h ago</div>
                 </div>
-
-                <div class="feedback-item" onclick="openDetail(4)">
-                    <div class="feedback-content">
-                        <div class="feedback-quote">"We're evaluating renewal. The 32k context is limiting our legal document analysis. Anthropic offers 200k."</div>
-                        <div class="feedback-meta">Theme: Context Window • €520k ARR • ⚠️ At Risk <span class="lang-badge">EN</span></div>
-                    </div>
-                    <div class="customer-info">
-                        <div class="customer-name">Clifford Chance</div>
-                        <div class="customer-detail">Legal • UK</div>
-                    </div>
-                    <div><span class="tag tag-churn">Churn Signal</span></div>
-                    <div class="source">QBR Call</div>
-                    <div><span class="model-tag large">Large</span></div>
-                    <div class="date">Yesterday</div>
+                <div class="feedback-item">
+                    <div><div class="feedback-quote">"We're evaluating renewal. The 32k context is limiting our legal doc analysis."</div><div class="feedback-meta">Theme: Context Window • €520k ARR • ⚠️ At Risk <span class="lang-badge">EN</span></div></div>
+                    <div><div class="customer-name">Clifford Chance</div><div class="customer-detail">Legal • UK</div></div>
+                    <div><span class="tag tag-churn">Churn</span></div>
+                    <div class="feedback-meta">QBR</div>
+                    <div><span class="model-tag">Large</span></div>
+                    <div class="feedback-meta">Yesterday</div>
                 </div>
-
-                <div class="feedback-item" onclick="openDetail(5)">
-                    <div class="feedback-content">
-                        <div class="feedback-quote">"Codestral is fantastic for Python but TypeScript completions are inconsistent. Sometimes imports are wrong."</div>
-                        <div class="feedback-meta">Theme: Codestral Quality • €95k ARR <span class="lang-badge">EN</span></div>
-                    </div>
-                    <div class="customer-info">
-                        <div class="customer-name">Datadog</div>
-                        <div class="customer-detail">Tech • US</div>
-                    </div>
-                    <div><span class="tag tag-pain">Pain Point</span></div>
-                    <div class="source">GitHub</div>
-                    <div><span class="model-tag codestral">Codestral</span></div>
-                    <div class="date">Yesterday</div>
-                </div>
-
-                <div class="feedback-item" onclick="openDetail(6)">
-                    <div class="feedback-content">
-                        <div class="feedback-quote">"Le Chat est devenu indispensable pour notre équipe. On l'utilise pour la rédaction, l'analyse, tout."</div>
-                        <div class="feedback-meta">Expansion opportunity • €150k ARR <span class="lang-badge">FR</span></div>
-                    </div>
-                    <div class="customer-info">
-                        <div class="customer-name">L'Oréal</div>
-                        <div class="customer-detail">Retail • France</div>
-                    </div>
+                <div class="feedback-item">
+                    <div><div class="feedback-quote">"Le Chat est devenu indispensable pour notre équipe. On l'utilise pour tout."</div><div class="feedback-meta">Expansion opportunity • €150k ARR <span class="lang-badge">FR</span></div></div>
+                    <div><div class="customer-name">L'Oréal</div><div class="customer-detail">Retail • France</div></div>
                     <div><span class="tag tag-praise">Praise</span></div>
-                    <div class="source">CS Check-in</div>
-                    <div><span class="model-tag lechat">Le Chat</span></div>
-                    <div class="date">Yesterday</div>
-                </div>
-
-                <div class="feedback-item" onclick="openDetail(7)">
-                    <div class="feedback-content">
-                        <div class="feedback-quote">"Pixtral struggles with handwritten medical notes. OCR works but reasoning about content is poor."</div>
-                        <div class="feedback-meta">Theme: Pixtral Medical • €220k ARR <span class="lang-badge">EN</span></div>
-                    </div>
-                    <div class="customer-info">
-                        <div class="customer-name">Roche</div>
-                        <div class="customer-detail">Healthcare • DACH</div>
-                    </div>
-                    <div><span class="tag tag-pain">Pain Point</span></div>
-                    <div class="source">Sales Call</div>
-                    <div><span class="model-tag pixtral">Pixtral</span></div>
-                    <div class="date">2 days</div>
-                </div>
-
-                <div class="feedback-item" onclick="openDetail(8)">
-                    <div class="feedback-content">
-                        <div class="feedback-quote">"El modelo pequeño es perfecto para nuestro chatbot de atención al cliente. Rápido y económico."</div>
-                        <div class="feedback-meta">€75k ARR <span class="lang-badge">ES</span></div>
-                    </div>
-                    <div class="customer-info">
-                        <div class="customer-name">Telefónica</div>
-                        <div class="customer-detail">Telecom • Spain</div>
-                    </div>
-                    <div><span class="tag tag-praise">Praise</span></div>
-                    <div class="source">Slack</div>
-                    <div><span class="model-tag small">Small</span></div>
-                    <div class="date">2 days</div>
-                </div>
-
-                <div class="feedback-item" onclick="openDetail(9)">
-                    <div class="feedback-content">
-                        <div class="feedback-quote">"Self-hosting documentation is incomplete. We spent 2 weeks debugging vLLM deployment issues."</div>
-                        <div class="feedback-meta">Theme: Self-Host DX • €0 (open weight) <span class="lang-badge">EN</span></div>
-                    </div>
-                    <div class="customer-info">
-                        <div class="customer-name">Criteo</div>
-                        <div class="customer-detail">Tech • France</div>
-                    </div>
-                    <div><span class="tag tag-pain">Pain Point</span></div>
-                    <div class="source">GitHub</div>
-                    <div><span class="model-tag">Nemo</span></div>
-                    <div class="date">3 days</div>
-                </div>
-
-                <div class="feedback-item" onclick="openDetail(10)">
-                    <div class="feedback-content">
-                        <div class="feedback-quote">"Rate limits are blocking our batch processing. We need higher throughput for end-of-month reports."</div>
-                        <div class="feedback-meta">Theme: Rate Limits • €340k ARR <span class="lang-badge">EN</span></div>
-                    </div>
-                    <div class="customer-info">
-                        <div class="customer-name">KPMG</div>
-                        <div class="customer-detail">Consulting • UK</div>
-                    </div>
-                    <div><span class="tag tag-request">Request</span></div>
-                    <div class="source">Support</div>
-                    <div><span class="model-tag api">API</span></div>
-                    <div class="date">3 days</div>
-                </div>
-            </div>
-
-            <!-- Themes Panel -->
-            <div class="themes-panel">
-                <div class="themes-header">
-                    <h3>🔥 Hot Themes (Verify Before Building)</h3>
-                    <button class="btn btn-secondary">View All Themes</button>
-                </div>
-
-                <div class="theme-item">
-                    <div class="theme-bar hot"></div>
-                    <div class="theme-info">
-                        <div class="theme-name">Mistral Large Latency in Production</div>
-                        <div class="theme-stats">8 mentions • 6 customers • €1.4M ARR impacted • 🇫🇷🇬🇧🇩🇪</div>
-                    </div>
-                    <span class="theme-status hypothesis">Needs Verification</span>
-                </div>
-
-                <div class="theme-item">
-                    <div class="theme-bar hot"></div>
-                    <div class="theme-info">
-                        <div class="theme-name">German/French Language Quality Regression</div>
-                        <div class="theme-stats">7 mentions • 5 customers • €680k ARR impacted • 🇩🇪🇫🇷🇨🇭</div>
-                    </div>
-                    <span class="theme-status hypothesis">Needs Verification</span>
-                </div>
-
-                <div class="theme-item">
-                    <div class="theme-bar warm"></div>
-                    <div class="theme-info">
-                        <div class="theme-name">Context Window Too Small for Legal/Docs</div>
-                        <div class="theme-stats">6 mentions • 4 customers • €1.1M ARR impacted • 🇬🇧🇺🇸</div>
-                    </div>
-                    <span class="theme-status validated">Validated ✓</span>
-                </div>
-
-                <div class="theme-item">
-                    <div class="theme-bar cool"></div>
-                    <div class="theme-info">
-                        <div class="theme-name">Function Calling + Streaming</div>
-                        <div class="theme-stats">5 mentions • 4 customers • €520k ARR impacted</div>
-                    </div>
-                    <span class="theme-status building">In Roadmap</span>
-                </div>
-
-                <div class="theme-item">
-                    <div class="theme-bar cool"></div>
-                    <div class="theme-info">
-                        <div class="theme-name">Codestral TypeScript Quality</div>
-                        <div class="theme-stats">4 mentions • 3 customers • €290k ARR impacted</div>
-                    </div>
-                    <span class="theme-status hypothesis">Needs Verification</span>
+                    <div class="feedback-meta">CS Call</div>
+                    <div><span class="model-tag">Le Chat</span></div>
+                    <div class="feedback-meta">Yesterday</div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Detail Modal -->
-    <div class="modal-overlay" id="detailModal">
-        <div class="modal">
-            <div class="modal-header">
-                <div>
-                    <div class="modal-title">Feedback Detail</div>
-                </div>
-                <button class="modal-close" onclick="closeModal()">×</button>
+        <!-- FLOW SECTION -->
+        <div id="flow" class="section">
+            <div class="section-header">
+                <h1>The Feedback Loop</h1>
+                <p>How feedback flows from customers through the organization and back</p>
             </div>
-            <div class="modal-body">
-                <div class="verbatim-box" id="modalQuote">
-                    "La latence sur Mistral Large nous tue. On voit 3-4 secondes en production. Nos utilisateurs se plaignent."
-                </div>
 
-                <div class="detail-row">
-                    <div class="detail-label">Customer</div>
-                    <div class="detail-value"><strong>BNP Paribas</strong> • Financial Services • Enterprise (€420k ARR)</div>
+            <div class="flow-container">
+                <div class="flow-node customer">
+                    <div class="flow-node-icon">🏢</div>
+                    <div class="flow-node-title">Enterprise Customers</div>
+                    <div class="flow-node-tools">Slack, Support, Calls, In-app</div>
                 </div>
-                <div class="detail-row">
-                    <div class="detail-label">Contact</div>
-                    <div class="detail-value">Marie Dubois, Head of AI Platform</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node gtm">
+                    <div class="flow-node-icon">💼</div>
+                    <div class="flow-node-title">GTM Team</div>
+                    <div class="flow-node-tools">Salesforce, Granola, Slack</div>
                 </div>
-                <div class="detail-row">
-                    <div class="detail-label">Region</div>
-                    <div class="detail-value">France 🇫🇷 • French-speaking</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node product">
+                    <div class="flow-node-icon">📋</div>
+                    <div class="flow-node-title">Product</div>
+                    <div class="flow-node-tools">Notion, Google Docs</div>
                 </div>
-                <div class="detail-row">
-                    <div class="detail-label">Source</div>
-                    <div class="detail-value">Slack (#bnp-mistral-support) • 2 hours ago</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node engineering">
+                    <div class="flow-node-icon">⚙️</div>
+                    <div class="flow-node-title">Engineering</div>
+                    <div class="flow-node-tools">Linear, GitHub</div>
                 </div>
-                <div class="detail-row">
-                    <div class="detail-label">Category</div>
-                    <div class="detail-value"><span class="tag tag-pain">Pain Point</span></div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Model</div>
-                    <div class="detail-value">Mistral Large • La Plateforme API</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Theme</div>
-                    <div class="detail-value">Latency Issues (8 related items from 6 customers)</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Use Case</div>
-                    <div class="detail-value">Real-time trading assistant • Compliance checks</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Customer Stage</div>
-                    <div class="detail-value">Active • Day 240 • Heavy usage (top 5%)</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Account Owner</div>
-                    <div class="detail-value">Thomas Martin (Enterprise AE)</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node customer">
+                    <div class="flow-node-icon">✅</div>
+                    <div class="flow-node-title">Customer Update</div>
+                    <div class="flow-node-tools">Slack, Email, Changelog</div>
                 </div>
             </div>
-            <div class="modal-actions">
-                <button class="btn btn-secondary">Create Linear Issue</button>
-                <button class="btn btn-secondary">Link to Theme</button>
-                <button class="btn btn-primary">Mark Reviewed</button>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3>📥 Capture Points</h3>
+                    <ul style="margin-left: 1rem; font-size: 0.875rem; color: #475569;">
+                        <li><strong>Shared Slack channels</strong> - #customer-mistral-support</li>
+                        <li><strong>Sales calls</strong> - Granola transcripts auto-summarized</li>
+                        <li><strong>Support tickets</strong> - Intercom/Zendesk → Notion</li>
+                        <li><strong>QBRs & renewals</strong> - Structured fields in Salesforce</li>
+                        <li><strong>In-app feedback</strong> - Le Chat thumbs up/down</li>
+                        <li><strong>GitHub issues</strong> - Open weight community</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>📤 Closing the Loop</h3>
+                    <ul style="margin-left: 1rem; font-size: 0.875rem; color: #475569;">
+                        <li><strong>Feature shipped</strong> → Auto-notify via Slack DM</li>
+                        <li><strong>Bug fixed</strong> → Linear closes, Slack pings customer</li>
+                        <li><strong>Roadmap update</strong> → CS shares in QBR</li>
+                        <li><strong>Won't do</strong> → AE explains why, offers alternative</li>
+                        <li><strong>Changelog</strong> → Posted to customer Slack channels</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- AUTOMATIONS SECTION -->
+        <div id="automations" class="section">
+            <div class="section-header">
+                <h1>Where to Automate</h1>
+                <p>Key automation opportunities using Slack, Salesforce, Notion, Linear, GitHub</p>
+            </div>
+
+            <div class="grid-3">
+                <div class="auto-card">
+                    <h4>🎙️ Sales Call → Notion</h4>
+                    <div class="trigger"><strong>Trigger:</strong> Granola meeting ends</div>
+                    <div class="action"><strong>Action:</strong> AI extracts requests, objections, competitor mentions → Creates Notion entry</div>
+                    <div class="tools">
+                        <span class="tool-badge slack">Slack</span>
+                        <span class="tool-badge notion">Notion</span>
+                    </div>
+                </div>
+                <div class="auto-card">
+                    <h4>🐛 Bug Report → Linear</h4>
+                    <div class="trigger"><strong>Trigger:</strong> Support ticket tagged "bug"</div>
+                    <div class="action"><strong>Action:</strong> Auto-create Linear issue with customer context + severity</div>
+                    <div class="tools">
+                        <span class="tool-badge salesforce">Salesforce</span>
+                        <span class="tool-badge linear">Linear</span>
+                    </div>
+                </div>
+                <div class="auto-card">
+                    <h4>💬 Slack Reaction → Log</h4>
+                    <div class="trigger"><strong>Trigger:</strong> Emoji reaction (🐛📣💡) in customer channel</div>
+                    <div class="action"><strong>Action:</strong> Capture message → Add to Notion feedback DB with customer data</div>
+                    <div class="tools">
+                        <span class="tool-badge slack">Slack</span>
+                        <span class="tool-badge notion">Notion</span>
+                    </div>
+                </div>
+                <div class="auto-card">
+                    <h4>📉 Usage Drop → Alert</h4>
+                    <div class="trigger"><strong>Trigger:</strong> Customer usage drops >20% in 14 days</div>
+                    <div class="action"><strong>Action:</strong> Alert CSM in Slack, add "At Risk" in Salesforce</div>
+                    <div class="tools">
+                        <span class="tool-badge slack">Slack</span>
+                        <span class="tool-badge salesforce">Salesforce</span>
+                    </div>
+                </div>
+                <div class="auto-card">
+                    <h4>✅ Feature Shipped → Notify</h4>
+                    <div class="trigger"><strong>Trigger:</strong> Linear issue closes with "shipped" label</div>
+                    <div class="action"><strong>Action:</strong> Notify all customers who requested it via Slack DM</div>
+                    <div class="tools">
+                        <span class="tool-badge linear">Linear</span>
+                        <span class="tool-badge slack">Slack</span>
+                    </div>
+                </div>
+                <div class="auto-card">
+                    <h4>📊 Weekly Digest</h4>
+                    <div class="trigger"><strong>Trigger:</strong> Friday 4pm</div>
+                    <div class="action"><strong>Action:</strong> AI summarizes top themes, coverage gaps, churn signals → Posts to #product-feedback</div>
+                    <div class="tools">
+                        <span class="tool-badge notion">Notion</span>
+                        <span class="tool-badge slack">Slack</span>
+                    </div>
+                </div>
+                <div class="auto-card">
+                    <h4>🏷️ Theme Critical Mass</h4>
+                    <div class="trigger"><strong>Trigger:</strong> Theme reaches 5+ feedback items</div>
+                    <div class="action"><strong>Action:</strong> Alert PM owner: "Theme X ready for verification"</div>
+                    <div class="tools">
+                        <span class="tool-badge notion">Notion</span>
+                        <span class="tool-badge slack">Slack</span>
+                    </div>
+                </div>
+                <div class="auto-card">
+                    <h4>🔗 GitHub Issue → Triage</h4>
+                    <div class="trigger"><strong>Trigger:</strong> New issue on mistral-community repos</div>
+                    <div class="action"><strong>Action:</strong> AI labels, high-priority creates Linear ticket</div>
+                    <div class="tools">
+                        <span class="tool-badge github">GitHub</span>
+                        <span class="tool-badge linear">Linear</span>
+                    </div>
+                </div>
+                <div class="auto-card">
+                    <h4>📝 QBR Prep</h4>
+                    <div class="trigger"><strong>Trigger:</strong> QBR scheduled in Salesforce (7 days out)</div>
+                    <div class="action"><strong>Action:</strong> Generate feedback summary doc in Google Docs for AE</div>
+                    <div class="tools">
+                        <span class="tool-badge salesforce">Salesforce</span>
+                        <span class="tool-badge google">Google</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEAM VIEWS SECTION -->
+        <div id="teams" class="section">
+            <div class="section-header">
+                <h1>What Each Team Sees</h1>
+                <p>Role-based views so everyone gets relevant information without noise</p>
+            </div>
+
+            <div class="grid-4">
+                <div class="team-card">
+                    <div class="team-header leadership">👔 Leadership</div>
+                    <div class="team-body">
+                        <ul>
+                            <li>Top 5 themes by ARR impact</li>
+                            <li>Churn signals (€ at risk)</li>
+                            <li>Competitive loss reasons</li>
+                            <li>Build vs Kill decisions</li>
+                            <li>Monthly trend summary</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-header pm">📋 Product Managers</div>
+                    <div class="team-body">
+                        <ul>
+                            <li>All feedback by product/model</li>
+                            <li>Themes with verification status</li>
+                            <li>Verbatim quotes for context</li>
+                            <li>Usage data per feature</li>
+                            <li>Customer segments affected</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-header engineering">⚙️ Engineering</div>
+                    <div class="team-body">
+                        <ul>
+                            <li>Bugs by severity</li>
+                            <li>Customer impact count</li>
+                            <li>Repro steps & context</li>
+                            <li>Technical requests</li>
+                            <li>Linked Linear issues</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-header sales">💼 Sales / CS</div>
+                    <div class="team-body">
+                        <ul>
+                            <li>My accounts' feedback</li>
+                            <li>Status of their requests</li>
+                            <li>At-risk signals</li>
+                            <li>Roadmap visibility for deals</li>
+                            <li>Success stories for pitches</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h3>🔧 Implementation: Notion Views</h3>
+                <p style="font-size: 0.875rem; color: #64748b; margin-bottom: 1rem;">One database, filtered views for each team. Example Notion structure:</p>
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem;">
+                    📁 Feedback DB<br>
+                    &nbsp;&nbsp;├── 👔 Leadership View (grouped by Theme, sorted by ARR)<br>
+                    &nbsp;&nbsp;├── 📋 PM View (filtered by Product, Kanban by Status)<br>
+                    &nbsp;&nbsp;├── ⚙️ Eng View (filtered to Bugs, sorted by Severity)<br>
+                    &nbsp;&nbsp;└── 💼 Sales View (filtered by Account Owner)
+                </div>
+            </div>
+        </div>
+
+        <!-- DISCOVERY SECTION -->
+        <div id="discovery" class="section">
+            <div class="section-header">
+                <h1>Product Discovery Support</h1>
+                <p>Tools and processes to help PMs understand what to build next</p>
+            </div>
+
+            <div class="grid-3">
+                <div class="discovery-card">
+                    <h4>🎯 Jobs-to-be-Done Interviews</h4>
+                    <p>Understand the underlying job, not just the feature request</p>
+                    <ul>
+                        <li>When did you first realize you needed this?</li>
+                        <li>What were you doing before?</li>
+                        <li>What does success look like?</li>
+                    </ul>
+                </div>
+                <div class="discovery-card">
+                    <h4>📊 Usage Analytics</h4>
+                    <p>Let behavior tell you what words can't</p>
+                    <ul>
+                        <li>Power users: what do they do differently?</li>
+                        <li>Drop-off points: where do people get stuck?</li>
+                        <li>Feature adoption: used vs ignored?</li>
+                    </ul>
+                </div>
+                <div class="discovery-card">
+                    <h4>🏆 Win/Loss Analysis</h4>
+                    <p>Interview customers who chose you AND those who didn't</p>
+                    <ul>
+                        <li>What tipped the decision?</li>
+                        <li>What did competitors offer?</li>
+                        <li>What almost made you choose differently?</li>
+                    </ul>
+                </div>
+                <div class="discovery-card">
+                    <h4>🔬 Design Partner Programs</h4>
+                    <p>Co-develop with customers who have the problem</p>
+                    <ul>
+                        <li>5-8 partners, not too many</li>
+                        <li>Weekly check-ins, not monthly</li>
+                        <li>Ship to them first, iterate fast</li>
+                    </ul>
+                </div>
+                <div class="discovery-card">
+                    <h4>🌐 Community Listening</h4>
+                    <p>Monitor where Mistral users talk</p>
+                    <ul>
+                        <li>r/LocalLLaMA, r/MachineLearning</li>
+                        <li>HuggingFace discussions</li>
+                        <li>X/Twitter, LinkedIn, Discord</li>
+                    </ul>
+                </div>
+                <div class="discovery-card">
+                    <h4>🔬 Hypothesis Testing</h4>
+                    <p>Verify before building</p>
+                    <ul>
+                        <li>5 requests = hypothesis, not feature</li>
+                        <li>Talk to 3x the sample to verify</li>
+                        <li>Look for unprompted mentions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADOPTION SECTION -->
+        <div id="adoption" class="section">
+            <div class="section-header">
+                <h1>Driving Adoption</h1>
+                <p>How to implement across teams and ensure buy-in</p>
+            </div>
+
+            <div class="card">
+                <h3>🚀 Implementation Playbook</h3>
+                <div class="impl-step">
+                    <div class="impl-num">1</div>
+                    <div class="impl-content">
+                        <h4>Start with Pain, Not Process</h4>
+                        <p>Don't pitch "a new feedback system." Lead with: "We lost a €500k deal because we didn't know 3 other customers wanted the same feature."</p>
+                    </div>
+                </div>
+                <div class="impl-step">
+                    <div class="impl-num">2</div>
+                    <div class="impl-content">
+                        <h4>Pilot with One Strategic Account</h4>
+                        <p>Pick your biggest customer. Set up the full loop just for them. Prove it works before scaling.</p>
+                    </div>
+                </div>
+                <div class="impl-step">
+                    <div class="impl-num">3</div>
+                    <div class="impl-content">
+                        <h4>Make Capture Effortless</h4>
+                        <p>If it takes >30 seconds to log feedback, nobody will do it. Use Slack emoji reactions, auto-capture from calls.</p>
+                    </div>
+                </div>
+                <div class="impl-step">
+                    <div class="impl-num">4</div>
+                    <div class="impl-content">
+                        <h4>Weekly "Voice of Customer" Ritual</h4>
+                        <p>15-min weekly meeting where PM shares top themes. Invite Sales/CS. Make it a habit.</p>
+                    </div>
+                </div>
+                <div class="impl-step">
+                    <div class="impl-num">5</div>
+                    <div class="impl-content">
+                        <h4>Close the Loop Visibly</h4>
+                        <p>When you ship something a customer asked for, make a big deal of it. This is the incentive for everyone to participate.</p>
+                    </div>
+                </div>
+                <div class="impl-step">
+                    <div class="impl-num">6</div>
+                    <div class="impl-content">
+                        <h4>Measure and Share Impact</h4>
+                        <p>Track: time from feedback to ship, NPS changes, expansion revenue. Share wins monthly.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 1.5rem;">
+                <div class="card">
+                    <h3>✅ What Works</h3>
+                    <ul style="margin-left: 1rem; font-size: 0.875rem; color: #166534;">
+                        <li>Executive sponsor who champions it</li>
+                        <li>Effortless capture (< 30 seconds)</li>
+                        <li>Visible wins ("customer X got feature Y")</li>
+                        <li>Regular rituals (weekly review)</li>
+                        <li>Clear ownership (Product Ops)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>❌ What Fails</h3>
+                    <ul style="margin-left: 1rem; font-size: 0.875rem; color: #991b1b;">
+                        <li>Over-engineering before proving value</li>
+                        <li>No ownership = system decays</li>
+                        <li>All capture, no action = people stop contributing</li>
+                        <li>No exec sponsor = Sales won't prioritize</li>
+                        <li>Too much process, not enough value</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        function setView(view) {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.target.closest('.nav-item').classList.add('active');
-            const titles = {
-                'all': 'All Feedback',
-                'requests': 'Feature Requests',
-                'bugs': 'Bug Reports',
-                'pain': 'Pain Points',
-                'churn': 'Churn Signals',
-                'praise': 'Praise'
-            };
-            document.querySelector('.header h1').textContent = titles[view] || 'All Feedback';
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.top-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.target.classList.add('active');
         }
-
-        function filterProduct(product) {
-            const names = {
-                'large': 'Mistral Large',
-                'small': 'Mistral Small',
-                'codestral': 'Codestral',
-                'pixtral': 'Pixtral',
-                'embed': 'Mistral Embed',
-                'api': 'La Plateforme',
-                'lechat': 'Le Chat',
-                'selfhost': 'Self-Hosted'
-            };
-            document.querySelector('.header h1').textContent = names[product] || 'All Feedback';
-        }
-
-        function filterTheme(theme) {
-            const names = {
-                'latency': 'Theme: Latency Issues',
-                'multilingual': 'Theme: Multilingual Quality',
-                'context': 'Theme: Context Window'
-            };
-            document.querySelector('.header h1').textContent = names[theme] || 'All Feedback';
-        }
-
-        function openDetail(id) {
-            document.getElementById('detailModal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('detailModal').classList.remove('active');
-        }
-
-        function openAddModal() {
-            alert('Log Feedback form would open here');
-        }
-
-        document.getElementById('detailModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
     </script>
 </body>
 </html>
