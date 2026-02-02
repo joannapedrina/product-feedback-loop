@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Feedback Tool</title>
+    <title>Mistral Product Feedback Hub</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -16,13 +16,13 @@
         /* Layout */
         .app {
             display: grid;
-            grid-template-columns: 240px 1fr;
+            grid-template-columns: 260px 1fr;
             min-height: 100vh;
         }
 
         /* Sidebar */
         .sidebar {
-            background: #0f172a;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
             color: white;
             padding: 1.5rem;
         }
@@ -30,14 +30,20 @@
         .logo {
             font-size: 1.25rem;
             font-weight: 700;
-            margin-bottom: 2rem;
+            margin-bottom: 0.25rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .nav-section {
+        .logo-sub {
+            font-size: 0.75rem;
+            color: #f59e0b;
             margin-bottom: 2rem;
+        }
+
+        .nav-section {
+            margin-bottom: 1.5rem;
         }
 
         .nav-label {
@@ -52,10 +58,10 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.75rem;
+            padding: 0.6rem 0.75rem;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: #94a3b8;
             transition: all 0.15s;
         }
@@ -68,10 +74,16 @@
             background: #334155;
             padding: 0.125rem 0.5rem;
             border-radius: 999px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
 
         .nav-item.active .count { background: rgba(0,0,0,0.2); }
+
+        .nav-divider {
+            height: 1px;
+            background: #334155;
+            margin: 1rem 0;
+        }
 
         /* Main Content */
         .main {
@@ -155,6 +167,7 @@
 
         .stat-change.up { color: #10b981; }
         .stat-change.down { color: #ef4444; }
+        .stat-change.neutral { color: #64748b; }
 
         /* Filters */
         .filters {
@@ -179,7 +192,7 @@
             padding: 0.5rem 0.75rem;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             background: white;
             cursor: pointer;
         }
@@ -203,10 +216,17 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
         }
 
         .coverage-alert strong { color: #92400e; }
+
+        .coverage-alert.good {
+            background: #ecfdf5;
+            border-color: #6ee7b7;
+        }
+
+        .coverage-alert.good strong { color: #065f46; }
 
         /* Feedback List */
         .feedback-list {
@@ -218,11 +238,11 @@
 
         .feedback-header {
             display: grid;
-            grid-template-columns: 1fr 120px 100px 100px 120px 80px;
+            grid-template-columns: 1fr 130px 90px 90px 100px 70px;
             padding: 0.75rem 1rem;
             background: #f8fafc;
             border-bottom: 1px solid #e2e8f0;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: #64748b;
             text-transform: uppercase;
@@ -231,8 +251,8 @@
 
         .feedback-item {
             display: grid;
-            grid-template-columns: 1fr 120px 100px 100px 120px 80px;
-            padding: 1rem;
+            grid-template-columns: 1fr 130px 90px 90px 100px 70px;
+            padding: 0.875rem 1rem;
             border-bottom: 1px solid #f1f5f9;
             align-items: center;
             cursor: pointer;
@@ -248,7 +268,7 @@
         }
 
         .feedback-quote {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: #1e293b;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -257,20 +277,31 @@
         }
 
         .feedback-meta {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #64748b;
+        }
+
+        .customer-info {
+            display: flex;
+            flex-direction: column;
         }
 
         .customer-name {
             font-weight: 500;
             color: #0f172a;
+            font-size: 0.8rem;
+        }
+
+        .customer-detail {
+            font-size: 0.7rem;
+            color: #64748b;
         }
 
         .tag {
             display: inline-block;
-            padding: 0.25rem 0.5rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 500;
         }
 
@@ -286,15 +317,22 @@
         }
 
         .model-tag {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
             background: #f1f5f9;
             border-radius: 4px;
             color: #475569;
         }
 
+        .model-tag.large { background: #fef3c7; color: #92400e; }
+        .model-tag.small { background: #dbeafe; color: #1e40af; }
+        .model-tag.codestral { background: #dcfce7; color: #166534; }
+        .model-tag.lechat { background: #f3e8ff; color: #7c3aed; }
+        .model-tag.pixtral { background: #fce7f3; color: #9d174d; }
+        .model-tag.api { background: #e0e7ff; color: #4338ca; }
+
         .date {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #64748b;
         }
 
@@ -357,7 +395,7 @@
         }
 
         .theme-status {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             padding: 0.25rem 0.5rem;
             border-radius: 4px;
             background: #f1f5f9;
@@ -452,16 +490,14 @@
             justify-content: flex-end;
         }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
+        .lang-badge {
+            display: inline-block;
+            padding: 0.15rem 0.4rem;
+            background: #f1f5f9;
+            border-radius: 3px;
+            font-size: 0.65rem;
             color: #64748b;
-        }
-
-        .empty-state h3 {
-            margin-bottom: 0.5rem;
-            color: #1e293b;
+            margin-left: 0.5rem;
         }
     </style>
 </head>
@@ -469,56 +505,77 @@
     <div class="app">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="logo">📊 Feedback Hub</div>
+            <div class="logo">📊 Mistral Feedback Hub</div>
+            <div class="logo-sub">Enterprise Voice of Customer</div>
 
             <div class="nav-section">
-                <div class="nav-label">Views</div>
+                <div class="nav-label">Categories</div>
                 <div class="nav-item active" onclick="setView('all')">
-                    📥 All Feedback <span class="count">47</span>
+                    📥 All Feedback <span class="count">52</span>
                 </div>
                 <div class="nav-item" onclick="setView('requests')">
-                    ✨ Requests <span class="count">18</span>
+                    ✨ Feature Requests <span class="count">19</span>
                 </div>
                 <div class="nav-item" onclick="setView('bugs')">
-                    🐛 Bugs <span class="count">12</span>
+                    🐛 Bugs <span class="count">14</span>
                 </div>
                 <div class="nav-item" onclick="setView('pain')">
-                    😤 Pain Points <span class="count">9</span>
+                    😤 Pain Points <span class="count">11</span>
                 </div>
                 <div class="nav-item" onclick="setView('churn')">
-                    ⚠️ Churn Signals <span class="count">5</span>
+                    ⚠️ Churn Signals <span class="count">4</span>
                 </div>
                 <div class="nav-item" onclick="setView('praise')">
-                    💚 Praise <span class="count">3</span>
+                    💚 Praise <span class="count">4</span>
+                </div>
+            </div>
+
+            <div class="nav-divider"></div>
+
+            <div class="nav-section">
+                <div class="nav-label">Models</div>
+                <div class="nav-item" onclick="filterProduct('large')">
+                    🧠 Mistral Large <span class="count">16</span>
+                </div>
+                <div class="nav-item" onclick="filterProduct('small')">
+                    ⚡ Mistral Small <span class="count">9</span>
+                </div>
+                <div class="nav-item" onclick="filterProduct('codestral')">
+                    👨‍💻 Codestral <span class="count">12</span>
+                </div>
+                <div class="nav-item" onclick="filterProduct('pixtral')">
+                    🖼️ Pixtral <span class="count">5</span>
+                </div>
+                <div class="nav-item" onclick="filterProduct('embed')">
+                    📐 Mistral Embed <span class="count">3</span>
                 </div>
             </div>
 
             <div class="nav-section">
                 <div class="nav-label">Products</div>
                 <div class="nav-item" onclick="filterProduct('api')">
-                    🔌 La Plateforme <span class="count">22</span>
+                    🔌 La Plateforme <span class="count">28</span>
                 </div>
                 <div class="nav-item" onclick="filterProduct('lechat')">
-                    💬 Le Chat <span class="count">11</span>
+                    💬 Le Chat <span class="count">15</span>
                 </div>
-                <div class="nav-item" onclick="filterProduct('codestral')">
-                    👨‍💻 Codestral <span class="count">8</span>
-                </div>
-                <div class="nav-item" onclick="filterProduct('large')">
-                    🧠 Mistral Large <span class="count">6</span>
+                <div class="nav-item" onclick="filterProduct('selfhost')">
+                    🏠 Self-Hosted <span class="count">9</span>
                 </div>
             </div>
 
+            <div class="nav-divider"></div>
+
             <div class="nav-section">
-                <div class="nav-label">Themes</div>
+                <div class="nav-label">🔥 Hot Themes</div>
                 <div class="nav-item" onclick="filterTheme('latency')">
-                    🔥 Latency Issues <span class="count">8</span>
+                    Latency (Large) <span class="count">8</span>
+                </div>
+                <div class="nav-item" onclick="filterTheme('multilingual')">
+                    Multilingual Quality <span class="count">7</span>
                 </div>
                 <div class="nav-item" onclick="filterTheme('context')">
-                    📏 Context Length <span class="count">6</span>
-                </div>
-                <div class="nav-item" onclick="filterTheme('pricing')">
-                    💰 Pricing <span class="count">5</span>
+                    Context Window <span class="count">6</span>
                 </div>
             </div>
         </div>
@@ -528,8 +585,8 @@
             <div class="header">
                 <h1>All Feedback</h1>
                 <div class="header-actions">
-                    <button class="btn btn-secondary">Export</button>
-                    <button class="btn btn-primary" onclick="openAddModal()">+ Add Feedback</button>
+                    <button class="btn btn-secondary">Export CSV</button>
+                    <button class="btn btn-primary" onclick="openAddModal()">+ Log Feedback</button>
                 </div>
             </div>
 
@@ -537,34 +594,34 @@
             <div class="stats-row">
                 <div class="stat-card">
                     <div class="stat-label">This Week</div>
-                    <div class="stat-value">23</div>
-                    <div class="stat-change up">↑ 15% vs last week</div>
+                    <div class="stat-value">27</div>
+                    <div class="stat-change up">↑ 23% vs last week</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Unique Customers</div>
-                    <div class="stat-value">18</div>
-                    <div class="stat-change up">↑ 3 new</div>
+                    <div class="stat-value">19</div>
+                    <div class="stat-change up">↑ 4 new voices</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Avg Response Time</div>
-                    <div class="stat-value">4.2h</div>
-                    <div class="stat-change down">↑ slower than target</div>
+                    <div class="stat-label">ARR at Risk</div>
+                    <div class="stat-value">€890k</div>
+                    <div class="stat-change down">4 churn signals</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Themes Validated</div>
-                    <div class="stat-value">3</div>
-                    <div class="stat-change">this month</div>
+                    <div class="stat-label">Themes Verified</div>
+                    <div class="stat-value">2</div>
+                    <div class="stat-change neutral">this month</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Closed Loop</div>
-                    <div class="stat-value">67%</div>
-                    <div class="stat-change up">↑ 12% improvement</div>
+                    <div class="stat-label">Loop Closed</div>
+                    <div class="stat-value">71%</div>
+                    <div class="stat-change up">↑ 8% improvement</div>
                 </div>
             </div>
 
             <!-- Coverage Alert -->
             <div class="coverage-alert">
-                ⚠️ <strong>Coverage gap:</strong> Only 3 data points from Healthcare segment this month. Consider reaching out to Acme Health, MedTech Corp.
+                ⚠️ <strong>Coverage gap:</strong> Only 2 data points from Healthcare (DACH region) this month. Pixtral feedback under-represented (5 items vs 15+ target).
             </div>
 
             <!-- Filters -->
@@ -572,31 +629,53 @@
                 <input type="text" class="search-box" placeholder="Search feedback...">
                 <div class="filter-group">
                     <span class="filter-label">Industry:</span>
-                    <select>
+                    <select id="industryFilter">
                         <option>All Industries</option>
                         <option>Financial Services</option>
-                        <option>Healthcare</option>
-                        <option>Technology</option>
-                        <option>Retail</option>
+                        <option>Healthcare / Life Sciences</option>
+                        <option>Legal / Professional Services</option>
+                        <option>Technology / SaaS</option>
+                        <option>Government / Public Sector</option>
+                        <option>Manufacturing</option>
+                        <option>Retail / E-commerce</option>
                     </select>
                 </div>
                 <div class="filter-group">
-                    <span class="filter-label">Tier:</span>
-                    <select>
-                        <option>All Tiers</option>
-                        <option>Enterprise ($100k+)</option>
-                        <option>Mid-Market</option>
-                        <option>Startup</option>
+                    <span class="filter-label">Region:</span>
+                    <select id="regionFilter">
+                        <option>All Regions</option>
+                        <option>France</option>
+                        <option>DACH (DE/AT/CH)</option>
+                        <option>UK</option>
+                        <option>Nordics</option>
+                        <option>Southern Europe</option>
+                        <option>US</option>
+                        <option>APAC</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">Language:</span>
+                    <select id="langFilter">
+                        <option>All Languages</option>
+                        <option>English</option>
+                        <option>French</option>
+                        <option>German</option>
+                        <option>Spanish</option>
+                        <option>Italian</option>
+                        <option>Dutch</option>
+                        <option>Portuguese</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <span class="filter-label">Source:</span>
-                    <select>
+                    <select id="sourceFilter">
                         <option>All Sources</option>
                         <option>Slack</option>
-                        <option>Sales Call</option>
-                        <option>Support</option>
+                        <option>Sales Call (Granola)</option>
+                        <option>Support Ticket</option>
+                        <option>QBR / Renewal</option>
                         <option>In-app</option>
+                        <option>GitHub Issue</option>
                     </select>
                 </div>
             </div>
@@ -608,92 +687,158 @@
                     <span>Customer</span>
                     <span>Category</span>
                     <span>Source</span>
-                    <span>Product</span>
+                    <span>Model</span>
                     <span>Date</span>
                 </div>
 
                 <div class="feedback-item" onclick="openDetail(1)">
                     <div class="feedback-content">
-                        <div class="feedback-quote">"The latency on Mistral Large is killing us. We're seeing 3-4 second response times in production. Our users are complaining."</div>
-                        <div class="feedback-meta">Theme: Latency Issues • $450k ARR</div>
+                        <div class="feedback-quote">"La latence sur Mistral Large nous tue. On voit 3-4 secondes en production. Nos utilisateurs se plaignent."</div>
+                        <div class="feedback-meta">Theme: Latency Issues • €420k ARR <span class="lang-badge">FR</span></div>
                     </div>
-                    <div class="customer-name">FinanceFlow Inc</div>
+                    <div class="customer-info">
+                        <div class="customer-name">BNP Paribas</div>
+                        <div class="customer-detail">Finance • France</div>
+                    </div>
                     <div><span class="tag tag-pain">Pain Point</span></div>
                     <div class="source">Slack</div>
-                    <div><span class="model-tag">Large</span></div>
-                    <div class="date">2 hours ago</div>
+                    <div><span class="model-tag large">Large</span></div>
+                    <div class="date">2h ago</div>
                 </div>
 
                 <div class="feedback-item" onclick="openDetail(2)">
                     <div class="feedback-content">
-                        <div class="feedback-quote">"We need function calling to work with streaming. Right now we have to wait for the full response."</div>
-                        <div class="feedback-meta">Theme: API Features • $280k ARR</div>
+                        <div class="feedback-quote">"Function calling with streaming would be huge for our real-time trading assistant. Right now we buffer everything."</div>
+                        <div class="feedback-meta">Theme: API Features • €280k ARR <span class="lang-badge">EN</span></div>
                     </div>
-                    <div class="customer-name">TechCorp AI</div>
+                    <div class="customer-info">
+                        <div class="customer-name">Revolut</div>
+                        <div class="customer-detail">Fintech • UK</div>
+                    </div>
                     <div><span class="tag tag-request">Request</span></div>
                     <div class="source">Sales Call</div>
-                    <div><span class="model-tag">API</span></div>
-                    <div class="date">5 hours ago</div>
+                    <div><span class="model-tag api">API</span></div>
+                    <div class="date">4h ago</div>
                 </div>
 
                 <div class="feedback-item" onclick="openDetail(3)">
                     <div class="feedback-content">
-                        <div class="feedback-quote">"Getting rate limited way too often. We bought the enterprise plan specifically to avoid this."</div>
-                        <div class="feedback-meta">Theme: Rate Limits • $180k ARR</div>
+                        <div class="feedback-quote">"Die deutsche Sprachqualität hat sich verschlechtert seit dem letzten Update. Grammatikfehler in formellen Dokumenten."</div>
+                        <div class="feedback-meta">Theme: Multilingual Quality • €180k ARR <span class="lang-badge">DE</span></div>
                     </div>
-                    <div class="customer-name">DataPipeline Co</div>
+                    <div class="customer-info">
+                        <div class="customer-name">Siemens</div>
+                        <div class="customer-detail">Manufacturing • DACH</div>
+                    </div>
                     <div><span class="tag tag-bug">Bug</span></div>
                     <div class="source">Support</div>
-                    <div><span class="model-tag">API</span></div>
-                    <div class="date">Yesterday</div>
+                    <div><span class="model-tag large">Large</span></div>
+                    <div class="date">6h ago</div>
                 </div>
 
                 <div class="feedback-item" onclick="openDetail(4)">
                     <div class="feedback-content">
-                        <div class="feedback-quote">"We're evaluating whether to renew. The context window is limiting our document processing use case."</div>
-                        <div class="feedback-meta">Theme: Context Length • $520k ARR • ⚠️ At Risk</div>
+                        <div class="feedback-quote">"We're evaluating renewal. The 32k context is limiting our legal document analysis. Anthropic offers 200k."</div>
+                        <div class="feedback-meta">Theme: Context Window • €520k ARR • ⚠️ At Risk <span class="lang-badge">EN</span></div>
                     </div>
-                    <div class="customer-name">LegalDocs Pro</div>
+                    <div class="customer-info">
+                        <div class="customer-name">Clifford Chance</div>
+                        <div class="customer-detail">Legal • UK</div>
+                    </div>
                     <div><span class="tag tag-churn">Churn Signal</span></div>
                     <div class="source">QBR Call</div>
-                    <div><span class="model-tag">Large</span></div>
+                    <div><span class="model-tag large">Large</span></div>
                     <div class="date">Yesterday</div>
                 </div>
 
                 <div class="feedback-item" onclick="openDetail(5)">
                     <div class="feedback-content">
-                        <div class="feedback-quote">"Codestral is amazing for Python but the TypeScript support is lacking compared to Copilot."</div>
-                        <div class="feedback-meta">Theme: Language Support • $75k ARR</div>
+                        <div class="feedback-quote">"Codestral is fantastic for Python but TypeScript completions are inconsistent. Sometimes imports are wrong."</div>
+                        <div class="feedback-meta">Theme: Codestral Quality • €95k ARR <span class="lang-badge">EN</span></div>
                     </div>
-                    <div class="customer-name">DevStudio</div>
+                    <div class="customer-info">
+                        <div class="customer-name">Datadog</div>
+                        <div class="customer-detail">Tech • US</div>
+                    </div>
                     <div><span class="tag tag-pain">Pain Point</span></div>
-                    <div class="source">Slack</div>
-                    <div><span class="model-tag">Codestral</span></div>
-                    <div class="date">2 days ago</div>
+                    <div class="source">GitHub</div>
+                    <div><span class="model-tag codestral">Codestral</span></div>
+                    <div class="date">Yesterday</div>
                 </div>
 
                 <div class="feedback-item" onclick="openDetail(6)">
                     <div class="feedback-content">
-                        <div class="feedback-quote">"Just deployed to production. The team loves it. Way better than what we had with OpenAI."</div>
-                        <div class="feedback-meta">$320k ARR • Expansion opportunity</div>
+                        <div class="feedback-quote">"Le Chat est devenu indispensable pour notre équipe. On l'utilise pour la rédaction, l'analyse, tout."</div>
+                        <div class="feedback-meta">Expansion opportunity • €150k ARR <span class="lang-badge">FR</span></div>
                     </div>
-                    <div class="customer-name">RetailAI Systems</div>
+                    <div class="customer-info">
+                        <div class="customer-name">L'Oréal</div>
+                        <div class="customer-detail">Retail • France</div>
+                    </div>
                     <div><span class="tag tag-praise">Praise</span></div>
                     <div class="source">CS Check-in</div>
-                    <div><span class="model-tag">API</span></div>
-                    <div class="date">2 days ago</div>
+                    <div><span class="model-tag lechat">Le Chat</span></div>
+                    <div class="date">Yesterday</div>
                 </div>
 
                 <div class="feedback-item" onclick="openDetail(7)">
                     <div class="feedback-content">
-                        <div class="feedback-quote">"Le Chat needs better export options. We can't easily share conversations with the team."</div>
-                        <div class="feedback-meta">Theme: Le Chat UX • $50k ARR</div>
+                        <div class="feedback-quote">"Pixtral struggles with handwritten medical notes. OCR works but reasoning about content is poor."</div>
+                        <div class="feedback-meta">Theme: Pixtral Medical • €220k ARR <span class="lang-badge">EN</span></div>
                     </div>
-                    <div class="customer-name">ConsultCo</div>
+                    <div class="customer-info">
+                        <div class="customer-name">Roche</div>
+                        <div class="customer-detail">Healthcare • DACH</div>
+                    </div>
+                    <div><span class="tag tag-pain">Pain Point</span></div>
+                    <div class="source">Sales Call</div>
+                    <div><span class="model-tag pixtral">Pixtral</span></div>
+                    <div class="date">2 days</div>
+                </div>
+
+                <div class="feedback-item" onclick="openDetail(8)">
+                    <div class="feedback-content">
+                        <div class="feedback-quote">"El modelo pequeño es perfecto para nuestro chatbot de atención al cliente. Rápido y económico."</div>
+                        <div class="feedback-meta">€75k ARR <span class="lang-badge">ES</span></div>
+                    </div>
+                    <div class="customer-info">
+                        <div class="customer-name">Telefónica</div>
+                        <div class="customer-detail">Telecom • Spain</div>
+                    </div>
+                    <div><span class="tag tag-praise">Praise</span></div>
+                    <div class="source">Slack</div>
+                    <div><span class="model-tag small">Small</span></div>
+                    <div class="date">2 days</div>
+                </div>
+
+                <div class="feedback-item" onclick="openDetail(9)">
+                    <div class="feedback-content">
+                        <div class="feedback-quote">"Self-hosting documentation is incomplete. We spent 2 weeks debugging vLLM deployment issues."</div>
+                        <div class="feedback-meta">Theme: Self-Host DX • €0 (open weight) <span class="lang-badge">EN</span></div>
+                    </div>
+                    <div class="customer-info">
+                        <div class="customer-name">Criteo</div>
+                        <div class="customer-detail">Tech • France</div>
+                    </div>
+                    <div><span class="tag tag-pain">Pain Point</span></div>
+                    <div class="source">GitHub</div>
+                    <div><span class="model-tag">Nemo</span></div>
+                    <div class="date">3 days</div>
+                </div>
+
+                <div class="feedback-item" onclick="openDetail(10)">
+                    <div class="feedback-content">
+                        <div class="feedback-quote">"Rate limits are blocking our batch processing. We need higher throughput for end-of-month reports."</div>
+                        <div class="feedback-meta">Theme: Rate Limits • €340k ARR <span class="lang-badge">EN</span></div>
+                    </div>
+                    <div class="customer-info">
+                        <div class="customer-name">KPMG</div>
+                        <div class="customer-detail">Consulting • UK</div>
+                    </div>
                     <div><span class="tag tag-request">Request</span></div>
-                    <div class="source">In-app</div>
-                    <div><span class="model-tag">Le Chat</span></div>
-                    <div class="date">3 days ago</div>
+                    <div class="source">Support</div>
+                    <div><span class="model-tag api">API</span></div>
+                    <div class="date">3 days</div>
                 </div>
             </div>
 
@@ -701,14 +846,23 @@
             <div class="themes-panel">
                 <div class="themes-header">
                     <h3>🔥 Hot Themes (Verify Before Building)</h3>
-                    <button class="btn btn-secondary">View All</button>
+                    <button class="btn btn-secondary">View All Themes</button>
                 </div>
 
                 <div class="theme-item">
                     <div class="theme-bar hot"></div>
                     <div class="theme-info">
-                        <div class="theme-name">Latency Issues on Large Model</div>
-                        <div class="theme-stats">8 mentions • 5 customers • $1.2M ARR impacted</div>
+                        <div class="theme-name">Mistral Large Latency in Production</div>
+                        <div class="theme-stats">8 mentions • 6 customers • €1.4M ARR impacted • 🇫🇷🇬🇧🇩🇪</div>
+                    </div>
+                    <span class="theme-status hypothesis">Needs Verification</span>
+                </div>
+
+                <div class="theme-item">
+                    <div class="theme-bar hot"></div>
+                    <div class="theme-info">
+                        <div class="theme-name">German/French Language Quality Regression</div>
+                        <div class="theme-stats">7 mentions • 5 customers • €680k ARR impacted • 🇩🇪🇫🇷🇨🇭</div>
                     </div>
                     <span class="theme-status hypothesis">Needs Verification</span>
                 </div>
@@ -716,8 +870,8 @@
                 <div class="theme-item">
                     <div class="theme-bar warm"></div>
                     <div class="theme-info">
-                        <div class="theme-name">Context Window Limitations</div>
-                        <div class="theme-stats">6 mentions • 4 customers • $890k ARR impacted</div>
+                        <div class="theme-name">Context Window Too Small for Legal/Docs</div>
+                        <div class="theme-stats">6 mentions • 4 customers • €1.1M ARR impacted • 🇬🇧🇺🇸</div>
                     </div>
                     <span class="theme-status validated">Validated ✓</span>
                 </div>
@@ -726,9 +880,18 @@
                     <div class="theme-bar cool"></div>
                     <div class="theme-info">
                         <div class="theme-name">Function Calling + Streaming</div>
-                        <div class="theme-stats">5 mentions • 3 customers • $450k ARR impacted</div>
+                        <div class="theme-stats">5 mentions • 4 customers • €520k ARR impacted</div>
                     </div>
                     <span class="theme-status building">In Roadmap</span>
+                </div>
+
+                <div class="theme-item">
+                    <div class="theme-bar cool"></div>
+                    <div class="theme-info">
+                        <div class="theme-name">Codestral TypeScript Quality</div>
+                        <div class="theme-stats">4 mentions • 3 customers • €290k ARR impacted</div>
+                    </div>
+                    <span class="theme-status hypothesis">Needs Verification</span>
                 </div>
             </div>
         </div>
@@ -745,46 +908,54 @@
             </div>
             <div class="modal-body">
                 <div class="verbatim-box" id="modalQuote">
-                    "The latency on Mistral Large is killing us. We're seeing 3-4 second response times in production. Our users are complaining."
+                    "La latence sur Mistral Large nous tue. On voit 3-4 secondes en production. Nos utilisateurs se plaignent."
                 </div>
 
                 <div class="detail-row">
                     <div class="detail-label">Customer</div>
-                    <div class="detail-value"><strong>FinanceFlow Inc</strong> • Financial Services • Enterprise ($450k ARR)</div>
+                    <div class="detail-value"><strong>BNP Paribas</strong> • Financial Services • Enterprise (€420k ARR)</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Contact</div>
-                    <div class="detail-value">Sarah Chen, VP Engineering</div>
+                    <div class="detail-value">Marie Dubois, Head of AI Platform</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Region</div>
+                    <div class="detail-value">France 🇫🇷 • French-speaking</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Source</div>
-                    <div class="detail-value">Slack (#financeflow-support) • 2 hours ago</div>
+                    <div class="detail-value">Slack (#bnp-mistral-support) • 2 hours ago</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Category</div>
                     <div class="detail-value"><span class="tag tag-pain">Pain Point</span></div>
                 </div>
                 <div class="detail-row">
-                    <div class="detail-label">Product</div>
-                    <div class="detail-value">Mistral Large • API</div>
+                    <div class="detail-label">Model</div>
+                    <div class="detail-value">Mistral Large • La Plateforme API</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Theme</div>
-                    <div class="detail-value">Latency Issues (8 related items)</div>
+                    <div class="detail-value">Latency Issues (8 related items from 6 customers)</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Use Case</div>
+                    <div class="detail-value">Real-time trading assistant • Compliance checks</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Customer Stage</div>
-                    <div class="detail-value">Active • Day 180 • Heavy usage (top 10%)</div>
+                    <div class="detail-value">Active • Day 240 • Heavy usage (top 5%)</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Account Owner</div>
-                    <div class="detail-value">James Martinez (AE)</div>
+                    <div class="detail-value">Thomas Martin (Enterprise AE)</div>
                 </div>
             </div>
             <div class="modal-actions">
-                <button class="btn btn-secondary">Link to Linear</button>
-                <button class="btn btn-secondary">Add to Theme</button>
-                <button class="btn btn-primary">Mark as Reviewed</button>
+                <button class="btn btn-secondary">Create Linear Issue</button>
+                <button class="btn btn-secondary">Link to Theme</button>
+                <button class="btn btn-primary">Mark Reviewed</button>
             </div>
         </div>
     </div>
@@ -793,20 +964,38 @@
         function setView(view) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             event.target.closest('.nav-item').classList.add('active');
-            document.querySelector('.header h1').textContent =
-                view === 'all' ? 'All Feedback' :
-                view === 'requests' ? 'Feature Requests' :
-                view === 'bugs' ? 'Bug Reports' :
-                view === 'pain' ? 'Pain Points' :
-                view === 'churn' ? 'Churn Signals' : 'Praise';
+            const titles = {
+                'all': 'All Feedback',
+                'requests': 'Feature Requests',
+                'bugs': 'Bug Reports',
+                'pain': 'Pain Points',
+                'churn': 'Churn Signals',
+                'praise': 'Praise'
+            };
+            document.querySelector('.header h1').textContent = titles[view] || 'All Feedback';
         }
 
         function filterProduct(product) {
-            // Would filter the list
+            const names = {
+                'large': 'Mistral Large',
+                'small': 'Mistral Small',
+                'codestral': 'Codestral',
+                'pixtral': 'Pixtral',
+                'embed': 'Mistral Embed',
+                'api': 'La Plateforme',
+                'lechat': 'Le Chat',
+                'selfhost': 'Self-Hosted'
+            };
+            document.querySelector('.header h1').textContent = names[product] || 'All Feedback';
         }
 
         function filterTheme(theme) {
-            // Would filter by theme
+            const names = {
+                'latency': 'Theme: Latency Issues',
+                'multilingual': 'Theme: Multilingual Quality',
+                'context': 'Theme: Context Window'
+            };
+            document.querySelector('.header h1').textContent = names[theme] || 'All Feedback';
         }
 
         function openDetail(id) {
@@ -818,10 +1007,9 @@
         }
 
         function openAddModal() {
-            alert('Add Feedback form would open here');
+            alert('Log Feedback form would open here');
         }
 
-        // Close modal on overlay click
         document.getElementById('detailModal').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
