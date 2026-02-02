@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales & CS View | Mistral Feedback</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8fafc; color: #1e293b; }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left { display: flex; align-items: center; gap: 1.5rem; }
+        .logo { font-size: 1.1rem; font-weight: 700; color: #0f172a; }
+        .logo span { color: #f59e0b; }
+        .view-badge {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .region-selector {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .user-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Alert Bar */
+        .alert-bar {
+            background: linear-gradient(90deg, #fef2f2 0%, #fee2e2 100%);
+            border-bottom: 1px solid #fecaca;
+            padding: 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .alert-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+        }
+        .alert-icon { font-size: 1.1rem; }
+        .alert-text { color: #991b1b; }
+        .alert-text strong { font-weight: 600; }
+        .alert-action {
+            background: #991b1b;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Main Layout */
+        .main { padding: 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .quick-stat {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+        .quick-stat.danger { border-left: 4px solid #ef4444; }
+        .quick-stat.success { border-left: 4px solid #10b981; }
+        .quick-stat.warning { border-left: 4px solid #f59e0b; }
+        .quick-stat.info { border-left: 4px solid #3b82f6; }
+        .stat-label {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .stat-sub {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-badge {
+            background: #ef4444;
+            color: white;
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Grid Layouts */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+        /* Account Cards */
+        .account-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .account-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: all 0.15s;
+            cursor: pointer;
+        }
+        .account-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-color: #cbd5e1;
+        }
+        .account-card.at-risk {
+            border-left: 4px solid #ef4444;
+            background: linear-gradient(90deg, #fef2f2 0%, white 20%);
+        }
+        .account-card.healthy {
+            border-left: 4px solid #10b981;
+        }
+        .account-card.expanding {
+            border-left: 4px solid #3b82f6;
+            background: linear-gradient(90deg, #eff6ff 0%, white 20%);
+        }
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        .account-info {}
+        .account-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .account-name .flag { font-size: 0.9rem; }
+        .account-detail {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        .account-arr {
+            text-align: right;
+        }
+        .arr-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .arr-label {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+        .account-status {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .status-tag {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .status-tag.churn { background: #fee2e2; color: #991b1b; }
+        .status-tag.renewal { background: #fef3c7; color: #92400e; }
+        .status-tag.usage-up { background: #dcfce7; color: #166534; }
+        .status-tag.expansion { background: #dbeafe; color: #1e40af; }
+        .status-tag.champion { background: #f3e8ff; color: #7c3aed; }
+        .account-feedback {
+            font-size: 0.85rem;
+            color: #475569;
+            font-style: italic;
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid #e2e8f0;
+        }
+        .account-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .account-btn {
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #475569;
+            transition: all 0.15s;
+        }
+        .account-btn:hover { background: #f1f5f9; }
+        .account-btn.primary { background: #0f172a; color: white; border-color: #0f172a; }
+
+        /* Feature Tracker */
+        .feature-tracker {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .tracker-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tracker-header h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .tracker-content { padding: 0; }
+        .feature-row {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .feature-row:last-child { border-bottom: none; }
+        .feature-info { flex: 1; }
+        .feature-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+        .feature-customers {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .feature-progress {
+            width: 150px;
+            margin: 0 1.5rem;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.25rem;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        .progress-fill.shipped { background: #10b981; }
+        .progress-fill.testing { background: #3b82f6; }
+        .progress-fill.progress { background: #f59e0b; }
+        .progress-fill.planned { background: #94a3b8; }
+        .progress-label {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+        .feature-eta {
+            width: 100px;
+            text-align: right;
+        }
+        .eta-value {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .eta-label {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        /* Win Stories */
+        .win-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .win-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        .win-customer {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .win-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 0.9rem;
+        }
+        .win-info h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.15rem;
+        }
+        .win-info span {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .win-product {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .win-quote {
+            font-size: 0.9rem;
+            color: #334155;
+            line-height: 1.5;
+            padding: 0.75rem;
+            background: #f0fdf4;
+            border-radius: 8px;
+            border-left: 3px solid #10b981;
+            margin-bottom: 0.75rem;
+        }
+        .win-metric {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .metric-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .metric-value {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #10b981;
+        }
+        .metric-label {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .win-actions {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .copy-btn {
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Renewal Calendar */
+        .renewal-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .renewal-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .renewal-header h3 { font-size: 0.9rem; font-weight: 600; }
+        .renewal-list { padding: 0; }
+        .renewal-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f1f5f9;
+            gap: 1rem;
+        }
+        .renewal-item:last-child { border-bottom: none; }
+        .renewal-date {
+            width: 50px;
+            text-align: center;
+        }
+        .renewal-day {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .renewal-month {
+            font-size: 0.65rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        .renewal-info { flex: 1; }
+        .renewal-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.15rem;
+        }
+        .renewal-detail {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .renewal-arr {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .renewal-status {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .renewal-status.risk { background: #fee2e2; color: #991b1b; }
+        .renewal-status.ok { background: #dcfce7; color: #166534; }
+        .renewal-status.watch { background: #fef3c7; color: #92400e; }
+
+        /* Quick Actions Panel */
+        .actions-panel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+        .actions-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        .action-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+        }
+        .action-item:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .action-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .action-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .quick-stats { grid-template-columns: repeat(2, 1fr); }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">Mistral <span>Feedback</span></div>
+            <div class="view-badge">💼 Sales & CS View</div>
+        </div>
+        <div class="header-right">
+            <select class="region-selector">
+                <option>All My Accounts</option>
+                <option>France</option>
+                <option>DACH</option>
+                <option>UK</option>
+                <option>Nordics</option>
+            </select>
+            <div class="user-menu">
+                <div class="user-avatar">MP</div>
+                <span class="user-name">Marie Petit</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Bar -->
+    <div class="alert-bar">
+        <div class="alert-content">
+            <span class="alert-icon">🚨</span>
+            <span class="alert-text"><strong>Clifford Chance renewal in 45 days</strong> — Customer flagged context window as blocker. Feature is in progress (ETA: Q1).</span>
+        </div>
+        <button class="alert-action">Schedule Check-in</button>
+    </div>
+
+    <div class="main">
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="quick-stat danger">
+                <div class="stat-label">At-Risk Accounts</div>
+                <div class="stat-value">4</div>
+                <div class="stat-sub">€2.1M ARR at risk</div>
+            </div>
+            <div class="quick-stat success">
+                <div class="stat-label">Expansion Signals</div>
+                <div class="stat-value">6</div>
+                <div class="stat-sub">3 in active conversations</div>
+            </div>
+            <div class="quick-stat info">
+                <div class="stat-label">Features Shipped</div>
+                <div class="stat-value">3</div>
+                <div class="stat-sub">This month for your accounts</div>
+            </div>
+            <div class="quick-stat warning">
+                <div class="stat-label">Renewals (90d)</div>
+                <div class="stat-value">8</div>
+                <div class="stat-sub">€3.2M in pipeline</div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <!-- At-Risk Accounts -->
+            <div>
+                <div class="section-header">
+                    <div class="section-title">
+                        At-Risk Accounts
+                        <span class="section-badge">4</span>
+                    </div>
+                </div>
+                <div class="account-grid">
+                    <div class="account-card at-risk">
+                        <div class="account-header">
+                            <div class="account-info">
+                                <div class="account-name"><span class="flag">🇬🇧</span> Clifford Chance</div>
+                                <div class="account-detail">Legal • UK • Enterprise</div>
+                            </div>
+                            <div class="account-arr">
+                                <div class="arr-value">€520k</div>
+                                <div class="arr-label">ARR</div>
+                            </div>
+                        </div>
+                        <div class="account-status">
+                            <span class="status-tag churn">Churn Risk</span>
+                            <span class="status-tag renewal">Renews in 45d</span>
+                        </div>
+                        <div class="account-feedback">
+                            "32k context window is limiting our legal document analysis—we need at least 128k to process full contracts."
+                        </div>
+                        <div class="account-actions">
+                            <button class="account-btn primary">Schedule Call</button>
+                            <button class="account-btn">View Feature Progress</button>
+                            <button class="account-btn">Full History</button>
+                        </div>
+                    </div>
+
+                    <div class="account-card at-risk">
+                        <div class="account-header">
+                            <div class="account-info">
+                                <div class="account-name"><span class="flag">🇩🇪</span> Deutsche Bank</div>
+                                <div class="account-detail">Finance • DACH • Enterprise</div>
+                            </div>
+                            <div class="account-arr">
+                                <div class="arr-value">€680k</div>
+                                <div class="arr-label">ARR</div>
+                            </div>
+                        </div>
+                        <div class="account-status">
+                            <span class="status-tag churn">Evaluating Competitors</span>
+                        </div>
+                        <div class="account-feedback">
+                            "Evaluating Claude for German compliance docs—need better language quality."
+                        </div>
+                        <div class="account-actions">
+                            <button class="account-btn primary">Schedule Call</button>
+                            <button class="account-btn">View Feedback</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expansion Opportunities -->
+            <div>
+                <div class="section-header">
+                    <div class="section-title">
+                        Expansion Opportunities
+                        <span class="section-badge" style="background: #10b981;">6</span>
+                    </div>
+                </div>
+                <div class="account-grid">
+                    <div class="account-card expanding">
+                        <div class="account-header">
+                            <div class="account-info">
+                                <div class="account-name"><span class="flag">🇫🇷</span> L'Oréal</div>
+                                <div class="account-detail">Retail • France • Growth</div>
+                            </div>
+                            <div class="account-arr">
+                                <div class="arr-value">€150k</div>
+                                <div class="arr-label">ARR</div>
+                            </div>
+                        </div>
+                        <div class="account-status">
+                            <span class="status-tag usage-up">Usage +120%</span>
+                            <span class="status-tag expansion">Expansion</span>
+                            <span class="status-tag champion">Champion Active</span>
+                        </div>
+                        <div class="account-feedback">
+                            "Marketing team wants to expand to global divisions. Le Chat has been transformative."
+                        </div>
+                        <div class="account-actions">
+                            <button class="account-btn primary">Send Proposal</button>
+                            <button class="account-btn">View Usage Data</button>
+                        </div>
+                    </div>
+
+                    <div class="account-card healthy">
+                        <div class="account-header">
+                            <div class="account-info">
+                                <div class="account-name"><span class="flag">🇸🇪</span> Spotify</div>
+                                <div class="account-detail">Tech • Nordics • Enterprise</div>
+                            </div>
+                            <div class="account-arr">
+                                <div class="arr-value">€340k</div>
+                                <div class="arr-label">ARR</div>
+                            </div>
+                        </div>
+                        <div class="account-status">
+                            <span class="status-tag expansion">New Use Case</span>
+                        </div>
+                        <div class="account-feedback">
+                            "Engineering wants Codestral for all teams—40% reduction in code review time."
+                        </div>
+                        <div class="account-actions">
+                            <button class="account-btn primary">Schedule Demo</button>
+                            <button class="account-btn">Use as Reference</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Tracker -->
+        <div class="section-header">
+            <div class="section-title">Feature Status for My Accounts</div>
+        </div>
+        <div class="feature-tracker" style="margin-bottom: 1.5rem;">
+            <div class="tracker-header">
+                <h3>Track requests from your customers</h3>
+                <span style="font-size: 0.75rem; color: #64748b;">4 features in flight</span>
+            </div>
+            <div class="tracker-content">
+                <div class="feature-row">
+                    <div class="feature-info">
+                        <div class="feature-name">Extended Context Window (128k → 200k)</div>
+                        <div class="feature-customers">Clifford Chance, Deutsche Bank, Allen & Overy +9</div>
+                    </div>
+                    <div class="feature-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill progress" style="width: 75%;"></div>
+                        </div>
+                        <div class="progress-label">In Progress (75%)</div>
+                    </div>
+                    <div class="feature-eta">
+                        <div class="eta-value">Q1 2025</div>
+                        <div class="eta-label">Est. Ship</div>
+                    </div>
+                </div>
+                <div class="feature-row">
+                    <div class="feature-info">
+                        <div class="feature-name">German Output Quality Fix</div>
+                        <div class="feature-customers">Siemens, BMW, Deutsche Bank +2</div>
+                    </div>
+                    <div class="feature-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill testing" style="width: 40%;"></div>
+                        </div>
+                        <div class="progress-label">Testing</div>
+                    </div>
+                    <div class="feature-eta">
+                        <div class="eta-value">2 weeks</div>
+                        <div class="eta-label">Est. Ship</div>
+                    </div>
+                </div>
+                <div class="feature-row">
+                    <div class="feature-info">
+                        <div class="feature-name">Streaming Function Calls</div>
+                        <div class="feature-customers">Revolut, BNP Paribas +4</div>
+                    </div>
+                    <div class="feature-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill planned" style="width: 20%;"></div>
+                        </div>
+                        <div class="progress-label">Planned</div>
+                    </div>
+                    <div class="feature-eta">
+                        <div class="eta-value">Q2 2025</div>
+                        <div class="eta-label">Est. Ship</div>
+                    </div>
+                </div>
+                <div class="feature-row">
+                    <div class="feature-info">
+                        <div class="feature-name">HIPAA Compliance Documentation</div>
+                        <div class="feature-customers">Philips Healthcare +2</div>
+                    </div>
+                    <div class="feature-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill planned" style="width: 10%;"></div>
+                        </div>
+                        <div class="progress-label">Backlog</div>
+                    </div>
+                    <div class="feature-eta">
+                        <div class="eta-value">TBD</div>
+                        <div class="eta-label">Not scheduled</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <!-- Win Stories -->
+            <div>
+                <div class="section-header">
+                    <div class="section-title">Recent Wins to Share</div>
+                </div>
+                <div class="win-card">
+                    <div class="win-header">
+                        <div class="win-customer">
+                            <div class="win-avatar" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">SP</div>
+                            <div class="win-info">
+                                <h4>Spotify</h4>
+                                <span>Nordics • Tech</span>
+                            </div>
+                        </div>
+                        <span class="win-product">Codestral</span>
+                    </div>
+                    <div class="win-quote">
+                        "Codestral has reduced our code review time by 40%. The team actually enjoys using it—they're more productive and shipping faster."
+                    </div>
+                    <div class="win-metric">
+                        <div class="metric-item">
+                            <span class="metric-value">40%</span>
+                            <span class="metric-label">Faster reviews</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-value">€340k</span>
+                            <span class="metric-label">ARR</span>
+                        </div>
+                    </div>
+                    <div class="win-actions">
+                        <button class="copy-btn">📋 Copy for Pitch</button>
+                        <button class="account-btn">Request Reference</button>
+                    </div>
+                </div>
+
+                <div class="win-card">
+                    <div class="win-header">
+                        <div class="win-customer">
+                            <div class="win-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">LO</div>
+                            <div class="win-info">
+                                <h4>L'Oréal</h4>
+                                <span>France • Retail</span>
+                            </div>
+                        </div>
+                        <span class="win-product">Le Chat</span>
+                    </div>
+                    <div class="win-quote">
+                        "Le Chat is now our default tool for first drafts. Marketing productivity is up 25%—and they're asking to expand to other regions."
+                    </div>
+                    <div class="win-metric">
+                        <div class="metric-item">
+                            <span class="metric-value">25%</span>
+                            <span class="metric-label">Productivity gain</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-value">+120%</span>
+                            <span class="metric-label">Usage growth</span>
+                        </div>
+                    </div>
+                    <div class="win-actions">
+                        <button class="copy-btn">📋 Copy for Pitch</button>
+                        <button class="account-btn">Request Case Study</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Renewal Calendar -->
+                <div class="renewal-card" style="margin-bottom: 1.5rem;">
+                    <div class="renewal-header">
+                        <h3>Upcoming Renewals (90d)</h3>
+                    </div>
+                    <div class="renewal-list">
+                        <div class="renewal-item">
+                            <div class="renewal-date">
+                                <div class="renewal-day">15</div>
+                                <div class="renewal-month">Feb</div>
+                            </div>
+                            <div class="renewal-info">
+                                <div class="renewal-name">Clifford Chance</div>
+                                <div class="renewal-detail">Legal • UK</div>
+                            </div>
+                            <div class="renewal-arr">€520k</div>
+                            <span class="renewal-status risk">At Risk</span>
+                        </div>
+                        <div class="renewal-item">
+                            <div class="renewal-date">
+                                <div class="renewal-day">28</div>
+                                <div class="renewal-month">Feb</div>
+                            </div>
+                            <div class="renewal-info">
+                                <div class="renewal-name">Siemens</div>
+                                <div class="renewal-detail">Manufacturing • DACH</div>
+                            </div>
+                            <div class="renewal-arr">€180k</div>
+                            <span class="renewal-status watch">Watch</span>
+                        </div>
+                        <div class="renewal-item">
+                            <div class="renewal-date">
+                                <div class="renewal-day">12</div>
+                                <div class="renewal-month">Mar</div>
+                            </div>
+                            <div class="renewal-info">
+                                <div class="renewal-name">BNP Paribas</div>
+                                <div class="renewal-detail">Finance • France</div>
+                            </div>
+                            <div class="renewal-arr">€420k</div>
+                            <span class="renewal-status ok">On Track</span>
+                        </div>
+                        <div class="renewal-item">
+                            <div class="renewal-date">
+                                <div class="renewal-day">25</div>
+                                <div class="renewal-month">Mar</div>
+                            </div>
+                            <div class="renewal-info">
+                                <div class="renewal-name">Spotify</div>
+                                <div class="renewal-detail">Tech • Nordics</div>
+                            </div>
+                            <div class="renewal-arr">€340k</div>
+                            <span class="renewal-status ok">On Track</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="actions-panel">
+                    <div class="actions-title">Quick Actions</div>
+                    <div class="action-grid">
+                        <div class="action-item">
+                            <div class="action-icon">📝</div>
+                            <div class="action-label">Log Feedback</div>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-icon">📊</div>
+                            <div class="action-label">Export Report</div>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-icon">📅</div>
+                            <div class="action-label">QBR Prep</div>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-icon">🎯</div>
+                            <div class="action-label">Request Feature</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

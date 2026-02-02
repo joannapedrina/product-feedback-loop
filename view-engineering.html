@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineering View | Mistral Feedback</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #e2e8f0; }
+
+        /* Header */
+        .header {
+            background: #1e293b;
+            padding: 0.75rem 2rem;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left { display: flex; align-items: center; gap: 1.5rem; }
+        .logo { font-size: 1.1rem; font-weight: 700; color: white; }
+        .logo span { color: #f59e0b; }
+        .view-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .team-selector {
+            background: #334155;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: #1e293b;
+            padding: 1rem 2rem;
+            display: flex;
+            gap: 2rem;
+            border-bottom: 1px solid #334155;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .stat-icon.critical { background: rgba(239, 68, 68, 0.2); }
+        .stat-icon.warning { background: rgba(245, 158, 11, 0.2); }
+        .stat-icon.success { background: rgba(16, 185, 129, 0.2); }
+        .stat-icon.info { background: rgba(59, 130, 246, 0.2); }
+        .stat-content {}
+        .stat-value { font-size: 1.25rem; font-weight: 700; }
+        .stat-label { font-size: 0.7rem; color: #94a3b8; }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* Board Container */
+        .board-container {
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .board-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .board-filters {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .filter-btn {
+            background: #334155;
+            border: none;
+            color: #94a3b8;
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .filter-btn:hover { color: white; }
+        .filter-btn.active { background: #f59e0b; color: #0f172a; }
+
+        /* Kanban Board */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            min-width: 900px;
+        }
+        .kanban-column {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1rem;
+            min-height: 500px;
+        }
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #334155;
+        }
+        .column-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .column-count {
+            background: #334155;
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+        }
+        .column-count.critical { background: #ef4444; }
+        .column-count.warning { background: #f59e0b; color: #0f172a; }
+        .column-count.info { background: #3b82f6; }
+        .column-count.success { background: #10b981; }
+
+        /* Bug Cards */
+        .bug-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+        }
+        .bug-card:hover {
+            border-color: #475569;
+            transform: translateY(-1px);
+        }
+        .bug-card.selected {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 1px #f59e0b;
+        }
+        .bug-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 10px 0 0 10px;
+        }
+        .bug-card.sev-critical::before { background: #ef4444; }
+        .bug-card.sev-high::before { background: #f59e0b; }
+        .bug-card.sev-medium::before { background: #3b82f6; }
+        .bug-card.sev-low::before { background: #94a3b8; }
+        .bug-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        .bug-id {
+            font-size: 0.7rem;
+            color: #64748b;
+            font-family: monospace;
+        }
+        .bug-severity {
+            font-size: 0.6rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .bug-severity.critical { background: #ef4444; color: white; }
+        .bug-severity.high { background: #f59e0b; color: #0f172a; }
+        .bug-severity.medium { background: #3b82f6; color: white; }
+        .bug-severity.low { background: #64748b; color: white; }
+        .bug-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+        .bug-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .bug-tag {
+            background: #334155;
+            color: #94a3b8;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+        }
+        .bug-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.75rem;
+            border-top: 1px solid #334155;
+        }
+        .bug-customers {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .customer-dots {
+            display: flex;
+        }
+        .customer-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #0f172a;
+            margin-left: -6px;
+            font-size: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        .customer-dot:first-child { margin-left: 0; }
+        .customer-dot.bnp { background: #3b82f6; }
+        .customer-dot.sie { background: #ef4444; }
+        .customer-dot.rev { background: #10b981; }
+        .customer-dot.more { background: #475569; }
+        .bug-assignee {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        /* Right Panel */
+        .right-panel {
+            background: #1e293b;
+            border-left: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+        }
+        .panel-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #334155;
+        }
+        .panel-header h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .panel-header p {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem;
+        }
+        .panel-section {
+            margin-bottom: 1.5rem;
+        }
+        .panel-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Customer Impact */
+        .impact-card {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .impact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .impact-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fca5a5;
+        }
+        .impact-arr {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #f87171;
+        }
+        .impact-list {
+            font-size: 0.8rem;
+            color: #fecaca;
+        }
+        .impact-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(239, 68, 68, 0.1);
+        }
+        .impact-item:last-child { border-bottom: none; }
+
+        /* Technical Details */
+        .tech-detail {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .tech-label {
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+        .tech-value {
+            color: #f59e0b;
+        }
+
+        /* Reproduction Steps */
+        .repro-steps {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .repro-step {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+        .step-number {
+            width: 20px;
+            height: 20px;
+            background: #334155;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        /* Links */
+        .link-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #0f172a;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            transition: all 0.15s;
+        }
+        .link-item:hover { color: white; background: #334155; }
+        .link-icon {
+            width: 28px;
+            height: 28px;
+            background: #334155;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Actions */
+        .panel-actions {
+            padding: 1.25rem;
+            border-top: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .action-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+        }
+        .action-btn.primary { background: #10b981; color: white; }
+        .action-btn.primary:hover { background: #059669; }
+        .action-btn.secondary { background: #334155; color: white; }
+        .action-btn.secondary:hover { background: #475569; }
+
+        /* Component Breakdown */
+        .component-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .component-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            background: #0f172a;
+            border-radius: 6px;
+        }
+        .component-bar {
+            flex: 1;
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .component-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        .component-fill.api { background: #ef4444; }
+        .component-fill.inference { background: #f59e0b; }
+        .component-fill.frontend { background: #3b82f6; }
+        .component-fill.finetune { background: #10b981; }
+        .component-name {
+            width: 100px;
+            font-size: 0.75rem;
+        }
+        .component-count {
+            font-size: 0.75rem;
+            color: #64748b;
+            width: 30px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">Mistral <span>Feedback</span></div>
+            <div class="view-badge">⚙️ Engineering View</div>
+        </div>
+        <div class="header-right">
+            <select class="team-selector">
+                <option>All Teams</option>
+                <option>API Gateway</option>
+                <option>Model Inference</option>
+                <option>Le Chat Frontend</option>
+                <option>Fine-tuning</option>
+            </select>
+            <div class="sync-status">
+                <span class="sync-dot"></span>
+                Synced with Linear • 2 min ago
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-icon critical">🐛</div>
+            <div class="stat-content">
+                <div class="stat-value">18</div>
+                <div class="stat-label">Open Bugs</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon warning">⚠️</div>
+            <div class="stat-content">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Critical</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon info">👥</div>
+            <div class="stat-content">
+                <div class="stat-value">23</div>
+                <div class="stat-label">Customers Affected</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon success">✅</div>
+            <div class="stat-content">
+                <div class="stat-value">7</div>
+                <div class="stat-label">Resolved (7d)</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon info">⏱️</div>
+            <div class="stat-content">
+                <div class="stat-value">3.2d</div>
+                <div class="stat-label">Avg Resolution</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <div class="board-container">
+            <div class="board-header">
+                <div class="board-title">Customer-Reported Bugs</div>
+                <div class="board-filters">
+                    <button class="filter-btn active">All</button>
+                    <button class="filter-btn">Critical</button>
+                    <button class="filter-btn">High</button>
+                    <button class="filter-btn">My Bugs</button>
+                </div>
+            </div>
+
+            <div class="kanban-board">
+                <!-- Open Column -->
+                <div class="kanban-column">
+                    <div class="column-header">
+                        <span class="column-title">
+                            Open
+                            <span class="column-count critical">8</span>
+                        </span>
+                    </div>
+
+                    <div class="bug-card sev-critical selected">
+                        <div class="bug-header">
+                            <span class="bug-id">BUG-1847</span>
+                            <span class="bug-severity critical">Critical</span>
+                        </div>
+                        <div class="bug-title">German output quality regression after v2.3 update</div>
+                        <div class="bug-meta">
+                            <span class="bug-tag">Model Inference</span>
+                            <span class="bug-tag">mistral-large</span>
+                            <span class="bug-tag">i18n</span>
+                        </div>
+                        <div class="bug-footer">
+                            <div class="bug-customers">
+                                <div class="customer-dots">
+                                    <div class="customer-dot sie">SI</div>
+                                    <div class="customer-dot bnp">BM</div>
+                                    <div class="customer-dot more">+3</div>
+                                </div>
+                                <span>5 customers</span>
+                            </div>
+                            <span class="bug-assignee">Unassigned</span>
+                        </div>
+                    </div>
+
+                    <div class="bug-card sev-high">
+                        <div class="bug-header">
+                            <span class="bug-id">BUG-1852</span>
+                            <span class="bug-severity high">High</span>
+                        </div>
+                        <div class="bug-title">API timeout on prompts >8k tokens</div>
+                        <div class="bug-meta">
+                            <span class="bug-tag">API Gateway</span>
+                            <span class="bug-tag">timeout</span>
+                        </div>
+                        <div class="bug-footer">
+                            <div class="bug-customers">
+                                <div class="customer-dots">
+                                    <div class="customer-dot bnp">BN</div>
+                                    <div class="customer-dot rev">RV</div>
+                                </div>
+                                <span>3 customers</span>
+                            </div>
+                            <span class="bug-assignee">Unassigned</span>
+                        </div>
+                    </div>
+
+                    <div class="bug-card sev-medium">
+                        <div class="bug-header">
+                            <span class="bug-id">BUG-1861</span>
+                            <span class="bug-severity medium">Medium</span>
+                        </div>
+                        <div class="bug-title">Le Chat session persistence issue</div>
+                        <div class="bug-meta">
+                            <span class="bug-tag">Le Chat</span>
+                            <span class="bug-tag">sessions</span>
+                        </div>
+                        <div class="bug-footer">
+                            <div class="bug-customers">
+                                <span>2 customers</span>
+                            </div>
+                            <span class="bug-assignee">Unassigned</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- In Progress Column -->
+                <div class="kanban-column">
+                    <div class="column-header">
+                        <span class="column-title">
+                            In Progress
+                            <span class="column-count warning">4</span>
+                        </span>
+                    </div>
+
+                    <div class="bug-card sev-critical">
+                        <div class="bug-header">
+                            <span class="bug-id">BUG-1839</span>
+                            <span class="bug-severity critical">Critical</span>
+                        </div>
+                        <div class="bug-title">Rate limiter incorrect count on batch requests</div>
+                        <div class="bug-meta">
+                            <span class="bug-tag">API Gateway</span>
+                            <span class="bug-tag">rate-limit</span>
+                        </div>
+                        <div class="bug-footer">
+                            <div class="bug-customers">
+                                <span>2 customers</span>
+                            </div>
+                            <span class="bug-assignee">@marie</span>
+                        </div>
+                    </div>
+
+                    <div class="bug-card sev-high">
+                        <div class="bug-header">
+                            <span class="bug-id">BUG-1843</span>
+                            <span class="bug-severity high">High</span>
+                        </div>
+                        <div class="bug-title">Embed model returns wrong dimensions</div>
+                        <div class="bug-meta">
+                            <span class="bug-tag">Embeddings</span>
+                            <span class="bug-tag">mistral-embed</span>
+                        </div>
+                        <div class="bug-footer">
+                            <div class="bug-customers">
+                                <span>1 customer</span>
+                            </div>
+                            <span class="bug-assignee">@lucas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- In Review Column -->
+                <div class="kanban-column">
+                    <div class="column-header">
+                        <span class="column-title">
+                            In Review
+                            <span class="column-count info">3</span>
+                        </span>
+                    </div>
+
+                    <div class="bug-card sev-high">
+                        <div class="bug-header">
+                            <span class="bug-id">BUG-1835</span>
+                            <span class="bug-severity high">High</span>
+                        </div>
+                        <div class="bug-title">JSON mode schema validation errors</div>
+                        <div class="bug-meta">
+                            <span class="bug-tag">API</span>
+                            <span class="bug-tag">json-mode</span>
+                        </div>
+                        <div class="bug-footer">
+                            <div class="bug-customers">
+                                <span>4 customers</span>
+                            </div>
+                            <span class="bug-assignee">PR #1847</span>
+                        </div>
+                    </div>
+
+                    <div class="bug-card sev-medium">
+                        <div class="bug-header">
+                            <span class="bug-id">BUG-1841</span>
+                            <span class="bug-severity medium">Medium</span>
+                        </div>
+                        <div class="bug-title">Codestral completion truncation</div>
+                        <div class="bug-meta">
+                            <span class="bug-tag">Codestral</span>
+                            <span class="bug-tag">completions</span>
+                        </div>
+                        <div class="bug-footer">
+                            <div class="bug-customers">
+                                <span>2 customers</span>
+                            </div>
+                            <span class="bug-assignee">PR #1852</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resolved Column -->
+                <div class="kanban-column">
+                    <div class="column-header">
+                        <span class="column-title">
+                            Resolved (7d)
+                            <span class="column-count success">7</span>
+                        </span>
+                    </div>
+
+                    <div class="bug-card sev-critical">
+                        <div class="bug-header">
+                            <span class="bug-id">BUG-1821</span>
+                            <span class="bug-severity critical">Critical</span>
+                        </div>
+                        <div class="bug-title">Memory leak in streaming responses</div>
+                        <div class="bug-meta">
+                            <span class="bug-tag">API Gateway</span>
+                            <span class="bug-tag">streaming</span>
+                        </div>
+                        <div class="bug-footer">
+                            <div class="bug-customers">
+                                <span>✅ 4 notified</span>
+                            </div>
+                            <span class="bug-assignee">Shipped</span>
+                        </div>
+                    </div>
+
+                    <div class="bug-card sev-high">
+                        <div class="bug-header">
+                            <span class="bug-id">BUG-1825</span>
+                            <span class="bug-severity high">High</span>
+                        </div>
+                        <div class="bug-title">Auth token refresh race condition</div>
+                        <div class="bug-meta">
+                            <span class="bug-tag">Auth</span>
+                            <span class="bug-tag">tokens</span>
+                        </div>
+                        <div class="bug-footer">
+                            <div class="bug-customers">
+                                <span>✅ 2 notified</span>
+                            </div>
+                            <span class="bug-assignee">Shipped</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <div class="panel-header">
+                <h3>BUG-1847: German Output Quality</h3>
+                <p>Critical • 5 customers • Opened 3 days ago</p>
+            </div>
+            <div class="panel-content">
+                <!-- Customer Impact -->
+                <div class="panel-section">
+                    <div class="panel-section-title">Customer Impact</div>
+                    <div class="impact-card">
+                        <div class="impact-header">
+                            <span class="impact-title">5 Enterprise Customers Affected</span>
+                            <span class="impact-arr">€890k ARR</span>
+                        </div>
+                        <div class="impact-list">
+                            <div class="impact-item">
+                                <span>Siemens</span>
+                                <span>€180k • Escalated</span>
+                            </div>
+                            <div class="impact-item">
+                                <span>BMW</span>
+                                <span>€220k • Reported</span>
+                            </div>
+                            <div class="impact-item">
+                                <span>Deutsche Bank</span>
+                                <span>€310k • At Risk</span>
+                            </div>
+                            <div class="impact-item">
+                                <span>+2 more</span>
+                                <span>€180k</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technical Details -->
+                <div class="panel-section">
+                    <div class="panel-section-title">Technical Details</div>
+                    <div class="tech-detail">
+                        <div class="tech-label">Affected Model</div>
+                        <div class="tech-value">mistral-large-2402</div>
+                    </div>
+                    <div class="tech-detail">
+                        <div class="tech-label">Regression Commit</div>
+                        <div class="tech-value">a3f2d1c (v2.3.0)</div>
+                    </div>
+                    <div class="tech-detail">
+                        <div class="tech-label">Error Pattern</div>
+                        <div class="tech-value">Grammar errors in formal German (Sie/Du, cases)</div>
+                    </div>
+                </div>
+
+                <!-- Repro Steps -->
+                <div class="panel-section">
+                    <div class="panel-section-title">Reproduction Steps</div>
+                    <div class="repro-steps">
+                        <div class="repro-step">
+                            <span class="step-number">1</span>
+                            <span>Set language: DE, formal style</span>
+                        </div>
+                        <div class="repro-step">
+                            <span class="step-number">2</span>
+                            <span>Request formal business document</span>
+                        </div>
+                        <div class="repro-step">
+                            <span class="step-number">3</span>
+                            <span>Observe incorrect article cases</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div class="panel-section">
+                    <div class="panel-section-title">Related Links</div>
+                    <div class="link-list">
+                        <a href="#" class="link-item">
+                            <div class="link-icon">📝</div>
+                            <span>Linear Issue LIN-4521</span>
+                        </a>
+                        <a href="#" class="link-item">
+                            <div class="link-icon">💬</div>
+                            <span>Slack Thread #german-quality</span>
+                        </a>
+                        <a href="#" class="link-item">
+                            <div class="link-icon">📊</div>
+                            <span>Customer Feedback (5 items)</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Component Breakdown -->
+                <div class="panel-section">
+                    <div class="panel-section-title">Open Bugs by Component</div>
+                    <div class="component-list">
+                        <div class="component-item">
+                            <span class="component-name">API Gateway</span>
+                            <div class="component-bar">
+                                <div class="component-fill api" style="width: 70%;"></div>
+                            </div>
+                            <span class="component-count">7</span>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-name">Model Inference</span>
+                            <div class="component-bar">
+                                <div class="component-fill inference" style="width: 50%;"></div>
+                            </div>
+                            <span class="component-count">5</span>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-name">Le Chat</span>
+                            <div class="component-bar">
+                                <div class="component-fill frontend" style="width: 30%;"></div>
+                            </div>
+                            <span class="component-count">3</span>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-name">Fine-tuning</span>
+                            <div class="component-bar">
+                                <div class="component-fill finetune" style="width: 20%;"></div>
+                            </div>
+                            <span class="component-count">2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-actions">
+                <button class="action-btn primary">Assign to Me</button>
+                <button class="action-btn secondary">Open in Linear</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

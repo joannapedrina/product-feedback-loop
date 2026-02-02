@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product View | Mistral Feedback</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8fafc; color: #1e293b; }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 1.5rem; }
+        .logo { font-size: 1.1rem; font-weight: 700; color: #0f172a; }
+        .logo span { color: #f59e0b; }
+        .view-badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            width: 300px;
+        }
+        .search-box input {
+            border: none;
+            background: none;
+            flex: 1;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .notification-btn {
+            width: 36px;
+            height: 36px;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+        }
+        .notification-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+        }
+
+        /* Layout */
+        .layout {
+            display: grid;
+            grid-template-columns: 280px 1fr 360px;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 1.5rem;
+        }
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+        .sidebar-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+        .filter-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .filter-select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background: white;
+        }
+        .filter-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .chip {
+            padding: 0.35rem 0.75rem;
+            background: #f1f5f9;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+        .chip:hover { background: #e2e8f0; }
+        .chip.active { background: #0f172a; color: white; }
+        .coverage-alert {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.75rem;
+        }
+        .coverage-alert strong { color: #92400e; display: block; margin-bottom: 0.25rem; }
+        .coverage-alert span { color: #a16207; }
+
+        /* Main Content */
+        .main-content {
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-mini {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            flex: 1;
+        }
+        .stat-mini-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .stat-mini-label {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        .stat-mini-change {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+        .stat-mini-change.up { color: #10b981; }
+        .stat-mini-change.down { color: #ef4444; }
+
+        /* Tabs */
+        .content-tabs {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 1.5rem;
+            background: white;
+            padding: 0.25rem;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        .content-tab {
+            padding: 0.6rem 1.25rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: #64748b;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+        .content-tab:hover { color: #0f172a; }
+        .content-tab.active { background: #0f172a; color: white; }
+        .tab-badge {
+            background: #ef4444;
+            color: white;
+            font-size: 0.65rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 10px;
+            margin-left: 0.5rem;
+        }
+
+        /* Feedback Cards */
+        .feedback-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .feedback-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .feedback-card:hover {
+            border-color: #f59e0b;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .feedback-card.selected {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        .feedback-customer {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .customer-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .customer-info h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.15rem;
+        }
+        .customer-info span {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .feedback-meta {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .tag {
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .tag-request { background: #dcfce7; color: #166534; }
+        .tag-bug { background: #fee2e2; color: #991b1b; }
+        .tag-pain { background: #fef3c7; color: #92400e; }
+        .tag-churn { background: #fce7f3; color: #9d174d; }
+        .tag-praise { background: #dbeafe; color: #1e40af; }
+        .arr-badge {
+            font-size: 0.7rem;
+            color: #059669;
+            font-weight: 600;
+        }
+        .feedback-quote {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #334155;
+            margin-bottom: 0.75rem;
+            padding-left: 0.75rem;
+            border-left: 3px solid #e2e8f0;
+        }
+        .feedback-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .feedback-tags {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .mini-tag {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+        }
+        .feedback-time {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+
+        /* Right Panel */
+        .right-panel {
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+        .panel-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .panel-header h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .panel-header p {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem;
+        }
+        .panel-section {
+            margin-bottom: 1.5rem;
+        }
+        .panel-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Theme Card */
+        .theme-card {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid #f59e0b;
+        }
+        .theme-card.verified { border-left-color: #10b981; }
+        .theme-card.hypothesis { border-left-color: #6366f1; }
+        .theme-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+        .theme-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 0.75rem;
+        }
+        .theme-progress {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        .theme-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f59e0b 0%, #10b981 100%);
+            border-radius: 3px;
+        }
+        .theme-status {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        /* AI Suggestion */
+        .ai-suggestion {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            border: 1px solid #c4b5fd;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6d28d9;
+        }
+        .ai-content {
+            font-size: 0.85rem;
+            color: #4c1d95;
+            line-height: 1.5;
+        }
+        .ai-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .ai-btn {
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        .ai-btn.primary { background: #7c3aed; color: white; }
+        .ai-btn.secondary { background: white; color: #6d28d9; border: 1px solid #c4b5fd; }
+
+        /* Significance Indicator */
+        .significance {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+        }
+        .significance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .significance-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .significance-status {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .significance-status.low { background: #fee2e2; color: #991b1b; }
+        .significance-status.medium { background: #fef3c7; color: #92400e; }
+        .significance-status.high { background: #dcfce7; color: #166534; }
+        .significance-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        .significance-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        .significance-fill.low { background: #ef4444; }
+        .significance-fill.medium { background: #f59e0b; }
+        .significance-fill.high { background: #10b981; }
+        .significance-detail {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        /* Action Buttons */
+        .panel-actions {
+            padding: 1.25rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .action-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+        }
+        .action-btn.primary {
+            background: #0f172a;
+            color: white;
+        }
+        .action-btn.primary:hover { background: #1e293b; }
+        .action-btn.secondary {
+            background: white;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        .action-btn.secondary:hover { border-color: #94a3b8; }
+
+        /* JTBD Modal */
+        .jtbd-helper {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .jtbd-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .jtbd-literal {
+            font-size: 0.8rem;
+            color: #78716c;
+            margin-bottom: 0.5rem;
+            text-decoration: line-through;
+        }
+        .jtbd-abstracted {
+            font-size: 0.85rem;
+            color: #0f172a;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">Mistral <span>Feedback</span></div>
+            <div class="view-badge">📋 Product Manager View</div>
+        </div>
+        <div class="header-right">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" placeholder="Search feedback, customers, themes...">
+            </div>
+            <button class="notification-btn">
+                🔔
+                <span class="notification-dot"></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="layout">
+        <!-- Sidebar Filters -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Quick Filters</div>
+                <div class="filter-chips">
+                    <span class="chip active">All</span>
+                    <span class="chip">Requests</span>
+                    <span class="chip">Bugs</span>
+                    <span class="chip">Pain Points</span>
+                    <span class="chip">Praise</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Product</div>
+                <select class="filter-select">
+                    <option>All Products</option>
+                    <option>Mistral Large</option>
+                    <option>Mistral Small</option>
+                    <option>Codestral</option>
+                    <option>Pixtral</option>
+                    <option>Le Chat</option>
+                    <option>API Platform</option>
+                </select>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Region</div>
+                <div class="filter-chips">
+                    <span class="chip active">All</span>
+                    <span class="chip">France</span>
+                    <span class="chip">DACH</span>
+                    <span class="chip">UK</span>
+                    <span class="chip">Nordics</span>
+                    <span class="chip">US</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Customer Tier</div>
+                <select class="filter-select">
+                    <option>All Tiers</option>
+                    <option>Enterprise (€200k+)</option>
+                    <option>Growth (€50-200k)</option>
+                    <option>Startup (< €50k)</option>
+                </select>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Time Range</div>
+                <div class="filter-chips">
+                    <span class="chip">7D</span>
+                    <span class="chip active">30D</span>
+                    <span class="chip">90D</span>
+                    <span class="chip">All</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Coverage Gaps</div>
+                <div class="coverage-alert">
+                    <strong>⚠️ Under-represented</strong>
+                    <span>Healthcare DACH: 3 items<br>Pixtral: 2 items<br>APAC region: 0 items</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="stats-bar">
+                <div class="stat-mini">
+                    <div class="stat-mini-value">127</div>
+                    <div class="stat-mini-label">Total Feedback</div>
+                    <div class="stat-mini-change up">↑ 23% vs prev</div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-mini-value">54</div>
+                    <div class="stat-mini-label">Unique Customers</div>
+                    <div class="stat-mini-change">42% of base</div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-mini-value">5</div>
+                    <div class="stat-mini-label">Themes Verified</div>
+                    <div class="stat-mini-change up">↑ 2 this week</div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-mini-value">4.2d</div>
+                    <div class="stat-mini-label">Avg Response Time</div>
+                    <div class="stat-mini-change up">↓ from 6.1d</div>
+                </div>
+            </div>
+
+            <div class="content-tabs">
+                <button class="content-tab active">Inbox <span class="tab-badge">23</span></button>
+                <button class="content-tab">All Feedback</button>
+                <button class="content-tab">Themes</button>
+                <button class="content-tab">By Product</button>
+            </div>
+
+            <div class="feedback-list">
+                <!-- Feedback Card 1 -->
+                <div class="feedback-card selected">
+                    <div class="feedback-header">
+                        <div class="feedback-customer">
+                            <div class="customer-avatar">CC</div>
+                            <div class="customer-info">
+                                <h4>Clifford Chance</h4>
+                                <span>Legal • UK • Enterprise</span>
+                            </div>
+                        </div>
+                        <div class="feedback-meta">
+                            <span class="tag tag-churn">Churn Risk</span>
+                            <span class="arr-badge">€520k ARR</span>
+                        </div>
+                    </div>
+                    <div class="feedback-quote">
+                        "We're evaluating renewal options. The 32k context window is limiting our legal document analysis—we need at least 128k to process full contracts without chunking."
+                    </div>
+                    <div class="feedback-footer">
+                        <div class="feedback-tags">
+                            <span class="mini-tag">Large</span>
+                            <span class="mini-tag">context-window</span>
+                            <span class="mini-tag">legal-docs</span>
+                        </div>
+                        <span class="feedback-time">via QBR • Yesterday</span>
+                    </div>
+                </div>
+
+                <!-- Feedback Card 2 -->
+                <div class="feedback-card">
+                    <div class="feedback-header">
+                        <div class="feedback-customer">
+                            <div class="customer-avatar" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">BN</div>
+                            <div class="customer-info">
+                                <h4>BNP Paribas</h4>
+                                <span>Finance • France • Enterprise</span>
+                            </div>
+                        </div>
+                        <div class="feedback-meta">
+                            <span class="tag tag-pain">Pain Point</span>
+                            <span class="arr-badge">€420k ARR</span>
+                        </div>
+                    </div>
+                    <div class="feedback-quote">
+                        "La latence sur Mistral Large nous tue en production. On voit 3-4 secondes sur certaines requêtes, c'est pas acceptable pour notre use case trading."
+                    </div>
+                    <div class="feedback-footer">
+                        <div class="feedback-tags">
+                            <span class="mini-tag">Large</span>
+                            <span class="mini-tag">latency</span>
+                            <span class="mini-tag">trading</span>
+                        </div>
+                        <span class="feedback-time">via Slack • 2h ago</span>
+                    </div>
+                </div>
+
+                <!-- Feedback Card 3 -->
+                <div class="feedback-card">
+                    <div class="feedback-header">
+                        <div class="feedback-customer">
+                            <div class="customer-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">RV</div>
+                            <div class="customer-info">
+                                <h4>Revolut</h4>
+                                <span>Fintech • UK • Growth</span>
+                            </div>
+                        </div>
+                        <div class="feedback-meta">
+                            <span class="tag tag-request">Request</span>
+                            <span class="arr-badge">€280k ARR</span>
+                        </div>
+                    </div>
+                    <div class="feedback-quote">
+                        "Function calling with streaming would be huge for our trading assistant. Right now we have to wait for the full response before we can act on tool calls."
+                    </div>
+                    <div class="feedback-footer">
+                        <div class="feedback-tags">
+                            <span class="mini-tag">API</span>
+                            <span class="mini-tag">function-calling</span>
+                            <span class="mini-tag">streaming</span>
+                        </div>
+                        <span class="feedback-time">via Granola • 4h ago</span>
+                    </div>
+                </div>
+
+                <!-- Feedback Card 4 -->
+                <div class="feedback-card">
+                    <div class="feedback-header">
+                        <div class="feedback-customer">
+                            <div class="customer-avatar" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">SI</div>
+                            <div class="customer-info">
+                                <h4>Siemens</h4>
+                                <span>Manufacturing • DACH • Enterprise</span>
+                            </div>
+                        </div>
+                        <div class="feedback-meta">
+                            <span class="tag tag-bug">Bug</span>
+                            <span class="arr-badge">€180k ARR</span>
+                        </div>
+                    </div>
+                    <div class="feedback-quote">
+                        "Die deutsche Sprachqualität hat sich seit dem letzten Update verschlechtert. Grammatikfehler in formellen Dokumenten sind für uns nicht akzeptabel."
+                    </div>
+                    <div class="feedback-footer">
+                        <div class="feedback-tags">
+                            <span class="mini-tag">Large</span>
+                            <span class="mini-tag">german</span>
+                            <span class="mini-tag">quality-regression</span>
+                        </div>
+                        <span class="feedback-time">via Support • 6h ago</span>
+                    </div>
+                </div>
+
+                <!-- Feedback Card 5 -->
+                <div class="feedback-card">
+                    <div class="feedback-header">
+                        <div class="feedback-customer">
+                            <div class="customer-avatar" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">LO</div>
+                            <div class="customer-info">
+                                <h4>L'Oréal</h4>
+                                <span>Retail • France • Growth</span>
+                            </div>
+                        </div>
+                        <div class="feedback-meta">
+                            <span class="tag tag-praise">Praise</span>
+                            <span class="arr-badge">€150k ARR</span>
+                        </div>
+                    </div>
+                    <div class="feedback-quote">
+                        "Le Chat est devenu indispensable pour notre équipe marketing. On l'utilise pour tout maintenant—briefs, social, même les présentations."
+                    </div>
+                    <div class="feedback-footer">
+                        <div class="feedback-tags">
+                            <span class="mini-tag">Le Chat</span>
+                            <span class="mini-tag">marketing</span>
+                            <span class="mini-tag">champion</span>
+                        </div>
+                        <span class="feedback-time">via CS Call • Yesterday</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <div class="panel-header">
+                <h3>Clifford Chance</h3>
+                <p>Selected feedback • Context Window Request</p>
+            </div>
+            <div class="panel-content">
+                <!-- AI JTBD Suggestion -->
+                <div class="ai-suggestion">
+                    <div class="ai-header">
+                        <span>🤖</span> AI-Powered JTBD Analysis
+                    </div>
+                    <div class="ai-content">
+                        <strong>Literal request:</strong> "128k context window"<br><br>
+                        <strong>Abstracted need:</strong> Process complete legal documents without breaking context or losing nuance across sections.
+                    </div>
+                    <div class="ai-actions">
+                        <button class="ai-btn primary">Accept</button>
+                        <button class="ai-btn secondary">Refine</button>
+                    </div>
+                </div>
+
+                <!-- Related Theme -->
+                <div class="panel-section">
+                    <div class="panel-section-title">Related Theme</div>
+                    <div class="theme-card verified">
+                        <div class="theme-name">Extended Context Window (128k+)</div>
+                        <div class="theme-stats">
+                            <span>✅ Verified</span>
+                            <span>12 customers</span>
+                            <span>€1.8M ARR</span>
+                        </div>
+                        <div class="theme-progress">
+                            <div class="theme-progress-fill" style="width: 85%;"></div>
+                        </div>
+                        <div class="theme-status">12 of 15 data points for 90% confidence</div>
+                    </div>
+                </div>
+
+                <!-- Statistical Significance -->
+                <div class="panel-section">
+                    <div class="panel-section-title">Statistical Significance</div>
+                    <div class="significance">
+                        <div class="significance-header">
+                            <span class="significance-title">Legal Sector (UK/EU)</span>
+                            <span class="significance-status high">High Confidence</span>
+                        </div>
+                        <div class="significance-bar">
+                            <div class="significance-fill high" style="width: 85%;"></div>
+                        </div>
+                        <div class="significance-detail">
+                            12 of 15 required data points (80% threshold met).<br>
+                            Segment size: 45 enterprise legal customers.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JTBD Helper -->
+                <div class="panel-section">
+                    <div class="panel-section-title">Abstract Above the Request</div>
+                    <div class="jtbd-helper">
+                        <div class="jtbd-title">🎯 Reframe the Ask</div>
+                        <div class="jtbd-literal">"We need 128k context window"</div>
+                        <div class="jtbd-abstracted">→ "Legal teams need to maintain document coherence across sections without manual chunking that loses cross-references."</div>
+                    </div>
+                </div>
+
+                <!-- Similar Feedback -->
+                <div class="panel-section">
+                    <div class="panel-section-title">Similar Feedback (4)</div>
+                    <div style="font-size: 0.8rem; color: #64748b;">
+                        <div style="padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
+                            <strong>Deutsche Bank</strong> — "Context limit forces us to chunk..."
+                        </div>
+                        <div style="padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
+                            <strong>Allen & Overy</strong> — "Can't analyze full contracts..."
+                        </div>
+                        <div style="padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
+                            <strong>Freshfields</strong> — "Need longer context for M&A..."
+                        </div>
+                        <div style="padding: 0.5rem 0;">
+                            <strong>Linklaters</strong> — "128k minimum for due diligence..."
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-actions">
+                <button class="action-btn primary">Link to Theme</button>
+                <button class="action-btn secondary">Create Linear Issue</button>
+                <button class="action-btn secondary">Acknowledge & Notify CS</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
