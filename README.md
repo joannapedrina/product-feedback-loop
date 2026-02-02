@@ -57,6 +57,16 @@ The plural of anecdote is not data—it's a hypothesis:
 - Look for unprompted mentions
 - Only build if pain is validated and sized
 
+### Abstract Above the Request
+
+Customer requests are a cocktail of their design skills, product knowledge, and understanding of their pain. They know nothing of your roadmap or technical constraints.
+
+> "When customers point to the moon, the naive product manager examines their finger."
+
+- If they ask for a "faster horse," they're telling you **speed is the requirement**
+- 5 users asked for "simpler event form" → Real pain was **how often** they filled it out → Solution: recurring events
+- Abstract a level or two above the literal request into something that benefits all customers
+
 ### Statistical Significance
 
 Ensure enough data per segment before acting:
@@ -81,6 +91,34 @@ This framework is designed to work with:
 - Linear
 - GitHub
 - Google Suite
+
+## AI-Powered Triage (Mistral Models)
+
+Use AI to automate collection and categorization while keeping humans in the loop for decisions.
+
+### Where AI Adds Value
+- **Auto-capture**: Extract feedback from Granola transcripts, Slack threads, support tickets
+- **Auto-categorize**: Tag by type, product, severity, segment
+- **Cluster & dedupe**: Group similar feedback, detect emerging themes
+- **Abstract to JTBD**: Help identify the job-to-be-done behind literal requests
+- **Risk scoring**: Flag churn signals, competitive mentions
+- **Digest generation**: Summarize weekly themes for PM review
+
+### Model Selection
+| Task | Model | Why |
+|------|-------|-----|
+| Quick categorization | Mistral Small | Fast, cheap, good for structured tasks |
+| Transcript extraction | Mistral Large | Better reasoning for nuanced context |
+| JTBD abstraction | Mistral Large | Requires inference about underlying needs |
+| Semantic clustering | Mistral Embed | Vector similarity for grouping |
+| Multilingual (FR, DE) | Mistral Large | Best quality for European feedback |
+
+### Where AI Should NOT Replace Humans
+- Prioritization decisions
+- Strategic trade-offs
+- Customer relationship management
+- Verification calls
+- Saying "no" with context
 
 ## Related Projects
 

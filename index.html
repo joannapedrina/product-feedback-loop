@@ -601,6 +601,7 @@
                 <button class="tab" onclick="showTab('categories')">📂 Feedback Types</button>
                 <button class="tab" onclick="showTab('products')">🧠 Models & Products</button>
                 <button class="tab" onclick="showTab('automation')">⚡ Automations</button>
+                <button class="tab" onclick="showTab('aitriage')">🤖 AI Triage</button>
                 <button class="tab" onclick="showTab('implementation')">🚀 Implementation</button>
                 <button class="tab" onclick="showTab('discovery')">🔍 Discovery Tools</button>
                 <button class="tab" onclick="showTab('targeted')">🎪 Targeted Collection</button>
@@ -1044,6 +1045,236 @@
                 </div>
             </div>
 
+            <!-- AI Triage Tab -->
+            <div id="aitriage" class="tab-content">
+                <h3 style="margin-bottom: 1rem;">AI-Powered Feedback Triage</h3>
+                <p style="color: #64748b; margin-bottom: 1.5rem;">Use Mistral models to automate collection, categorization, abstraction, and routing—while keeping humans in the loop for decisions.</p>
+
+                <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h4 style="color: #f59e0b; margin-bottom: 0.75rem;">🎯 The Philosophy</h4>
+                    <p style="font-size: 0.875rem; color: #cbd5e1;">AI handles the routing, deduping, and summarizing. Humans own the judgment, storytelling, and decisions. The goal is to get from raw feedback to actionable insight faster—not to outsource your thinking.</p>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">Where AI Adds Value</h4>
+                <div class="category-grid" style="margin-bottom: 2rem;">
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #dbeafe;">📥</div>
+                            <div class="category-title">Auto-Capture</div>
+                        </div>
+                        <p class="category-desc">Extract feedback from natural conversations without manual logging.</p>
+                        <div class="category-uses">
+                            <strong>Uses:</strong> Granola transcripts, Slack threads, support tickets, call recordings
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #dcfce7;">🏷️</div>
+                            <div class="category-title">Auto-Categorize</div>
+                        </div>
+                        <p class="category-desc">Tag by type (bug, request, praise), product, severity, and customer segment.</p>
+                        <div class="category-uses">
+                            <strong>Uses:</strong> Route to right team, build coverage dashboards, spot gaps
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #fef3c7;">🔗</div>
+                            <div class="category-title">Cluster & Dedupe</div>
+                        </div>
+                        <p class="category-desc">Group similar feedback, detect duplicates, identify emerging themes.</p>
+                        <div class="category-uses">
+                            <strong>Uses:</strong> Theme tracking, statistical significance, pattern detection
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #f3e8ff;">🎯</div>
+                            <div class="category-title">Abstract to JTBD</div>
+                        </div>
+                        <p class="category-desc">Help identify the job-to-be-done behind literal feature requests.</p>
+                        <div class="category-uses">
+                            <strong>Uses:</strong> "Faster horse" → speed requirement, "simpler form" → frequency problem
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #fee2e2;">⚠️</div>
+                            <div class="category-title">Risk Scoring</div>
+                        </div>
+                        <p class="category-desc">Flag churn signals, competitive mentions, escalation risk.</p>
+                        <div class="category-uses">
+                            <strong>Uses:</strong> Early warning for at-risk accounts, prioritize high-ARR feedback
+                        </div>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #e0e7ff;">📊</div>
+                            <div class="category-title">Digest Generation</div>
+                        </div>
+                        <p class="category-desc">Summarize weekly themes, coverage gaps, top verbatims.</p>
+                        <div class="category-uses">
+                            <strong>Uses:</strong> Weekly PM digest, exec briefings, Voice of Customer meetings
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">Mistral Model Selection</h4>
+                <table class="automation-table" style="margin-bottom: 2rem;">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Model</th>
+                            <th>Why</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Quick categorization</strong></td>
+                            <td>Mistral Small</td>
+                            <td>Fast, cheap, good for structured classification tasks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Transcript extraction</strong></td>
+                            <td>Mistral Large</td>
+                            <td>Better reasoning for nuanced context, objections vs. feedback</td>
+                        </tr>
+                        <tr>
+                            <td><strong>JTBD abstraction</strong></td>
+                            <td>Mistral Large</td>
+                            <td>Requires inference about underlying needs, not surface requests</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Semantic clustering</strong></td>
+                            <td>Mistral Embed</td>
+                            <td>Vector similarity for grouping related feedback</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Multilingual feedback</strong></td>
+                            <td>Mistral Large</td>
+                            <td>Best quality for FR, DE, ES customer feedback</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Weekly digests</strong></td>
+                            <td>Mistral Large</td>
+                            <td>Nuanced summarization, exec-ready writing</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin-bottom: 1rem;">Example Prompts</h4>
+                <div class="segment-grid" style="margin-bottom: 2rem;">
+                    <div class="segment-card" style="grid-column: span 2;">
+                        <h5>🏷️ Auto-Categorization Prompt</h5>
+                        <div style="background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.75rem; margin-top: 0.5rem; white-space: pre-wrap;">You are a product feedback classifier for Mistral AI.
+
+Given this customer feedback:
+"{feedback_text}"
+
+Customer context:
+- Company: {company_name}
+- ARR: {arr}
+- Industry: {industry}
+- Region: {region}
+
+Classify:
+1. Category: bug | feature_request | pain_point | praise | churn_signal
+2. Product: Large | Small | Codestral | Pixtral | Embed | Le Chat | API | Platform
+3. Severity: critical | high | medium | low
+4. Suggested theme (if matches existing): {existing_themes}
+
+Respond in JSON.</div>
+                    </div>
+                    <div class="segment-card" style="grid-column: span 2;">
+                        <h5>🎯 JTBD Abstraction Prompt</h5>
+                        <div style="background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.75rem; margin-top: 0.5rem; white-space: pre-wrap;">A customer said: "{feedback_text}"
+
+Don't take this at face value. Like the "faster horse" example, customers describe solutions, not problems.
+
+1. What is the literal request?
+2. What underlying job-to-be-done might this signal?
+3. What questions would you ask to verify the real need?
+4. What alternative solutions might address the same JTBD?
+
+Think step by step. The goal is to understand what success looks like for them, not just what feature they asked for.</div>
+                    </div>
+                    <div class="segment-card" style="grid-column: span 2;">
+                        <h5>📊 Weekly Digest Prompt</h5>
+                        <div style="background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.75rem; margin-top: 0.5rem; white-space: pre-wrap;">Generate a weekly Voice of Customer digest for the product team.
+
+This week's feedback:
+{feedback_items_json}
+
+Include:
+1. Top 3 themes by ARR impact (with customer count)
+2. Coverage gaps (segments with <10 data points)
+3. New churn signals (customers mentioning competitors or renewal concerns)
+4. Wins to celebrate (praise and expansion signals)
+5. 2-3 verbatim quotes that best capture the week
+
+Keep it under 500 words. Use bullet points. Lead with what needs decisions this week.</div>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">AI Triage Pipeline</h4>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                        <div style="text-align: center; flex: 1; min-width: 120px;">
+                            <div style="background: #dbeafe; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; font-size: 1.25rem;">📥</div>
+                            <div style="font-weight: 600; font-size: 0.8rem;">Ingest</div>
+                            <div style="font-size: 0.7rem; color: #64748b;">Slack, Granola, Support</div>
+                        </div>
+                        <div style="color: #94a3b8;">→</div>
+                        <div style="text-align: center; flex: 1; min-width: 120px;">
+                            <div style="background: #dcfce7; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; font-size: 1.25rem;">🏷️</div>
+                            <div style="font-weight: 600; font-size: 0.8rem;">Classify</div>
+                            <div style="font-size: 0.7rem; color: #64748b;">Mistral Small</div>
+                        </div>
+                        <div style="color: #94a3b8;">→</div>
+                        <div style="text-align: center; flex: 1; min-width: 120px;">
+                            <div style="background: #fef3c7; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; font-size: 1.25rem;">🔗</div>
+                            <div style="font-weight: 600; font-size: 0.8rem;">Cluster</div>
+                            <div style="font-size: 0.7rem; color: #64748b;">Mistral Embed</div>
+                        </div>
+                        <div style="color: #94a3b8;">→</div>
+                        <div style="text-align: center; flex: 1; min-width: 120px;">
+                            <div style="background: #f3e8ff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; font-size: 1.25rem;">🎯</div>
+                            <div style="font-weight: 600; font-size: 0.8rem;">Abstract</div>
+                            <div style="font-size: 0.7rem; color: #64748b;">Mistral Large</div>
+                        </div>
+                        <div style="color: #94a3b8;">→</div>
+                        <div style="text-align: center; flex: 1; min-width: 120px;">
+                            <div style="background: #fee2e2; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; font-size: 1.25rem;">👤</div>
+                            <div style="font-weight: 600; font-size: 0.8rem;">Human Review</div>
+                            <div style="font-size: 0.7rem; color: #64748b;">PM Decision</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <h4 style="color: #92400e; margin-bottom: 0.75rem;">⚠️ Where AI Should NOT Replace Humans</h4>
+                    <ul style="margin-left: 1.5rem; color: #92400e; font-size: 0.875rem;">
+                        <li><strong>Prioritization decisions:</strong> AI can score, but humans decide what to build</li>
+                        <li><strong>Strategic trade-offs:</strong> AI doesn't know your roadmap constraints or vision</li>
+                        <li><strong>Customer relationships:</strong> Closing the loop requires human judgment and empathy</li>
+                        <li><strong>Verification calls:</strong> AI can suggest questions, but humans build trust</li>
+                        <li><strong>Saying no:</strong> AI can flag what's low-value, but the PM owns the conversation</li>
+                    </ul>
+                </div>
+
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                    <h4 style="color: #0369a1; margin-bottom: 0.75rem;">💡 Getting Started with AI Triage</h4>
+                    <ol style="margin-left: 1.5rem; color: #0c4a6e; font-size: 0.875rem;">
+                        <li><strong>Start with one channel:</strong> Pick Slack or support tickets, not everything at once</li>
+                        <li><strong>Build the prompt library:</strong> Test categorization prompts on 50 real examples before automating</li>
+                        <li><strong>Human-in-the-loop first:</strong> Have AI suggest categories, humans confirm for first 2 weeks</li>
+                        <li><strong>Measure quality:</strong> Track agreement rate between AI and human reviewers</li>
+                        <li><strong>Add channels gradually:</strong> Once one channel works, add Granola, then support, then GitHub</li>
+                        <li><strong>Weekly calibration:</strong> Review AI mistakes weekly and update prompts</li>
+                    </ol>
+                </div>
+            </div>
+
             <!-- Implementation Tab -->
             <div id="implementation" class="tab-content">
                 <h3 style="margin-bottom: 1rem;">Implementation Playbook</h3>
@@ -1426,6 +1657,11 @@
                 <h3 style="margin-bottom: 1rem;">Verify Before You Build</h3>
                 <p style="color: #64748b; margin-bottom: 1.5rem;">The plural of anecdote is not data—it's a hypothesis. When you see clustering, don't build. Verify first.</p>
 
+                <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border: 1px solid #cbd5e1; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <p style="color: #475569; font-size: 0.9rem; font-style: italic; margin-bottom: 0.75rem;">"When customers point to the moon, the naive product manager examines their finger."</p>
+                    <p style="color: #64748b; font-size: 0.8rem;">The "faster horses" tale is often used to justify not listening to customers, but that misses the point. If a customer says they want a faster horse, they're telling you <strong>speed is a key requirement for transport</strong>. Your job is to figure out how to deliver that—which might be a car, not a faster horse.</p>
+                </div>
+
                 <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
                     <h4 style="color: #dc2626; margin-bottom: 0.75rem;">❌ The Trap</h4>
                     <p style="color: #7f1d1d; font-size: 0.875rem;">Five users ask for a simpler event form → Team immediately kicks off "event simplification" project → Ships feature that 5 users love and 500 ignore → Wasted effort.</p>
@@ -1433,7 +1669,7 @@
 
                 <div style="background: #ecfdf5; border: 1px solid #a7f3d0; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
                     <h4 style="color: #059669; margin-bottom: 0.75rem;">✅ The Right Approach</h4>
-                    <p style="color: #065f46; font-size: 0.875rem;">Five users ask for a simpler event form → Treat this as a <strong>hypothesis</strong> → Talk to 20 more calendar users → See if the pattern holds → <strong>Then</strong> decide whether to build.</p>
+                    <p style="color: #065f46; font-size: 0.875rem;">Five users ask for a simpler event form → Treat this as a <strong>hypothesis</strong> → Talk to 20 more calendar users → Discover the pain isn't form complexity but <strong>how often they have to fill it out</strong> → Build recurring events and easy duplication instead.</p>
                 </div>
 
                 <h4 style="margin-bottom: 1rem;">The Verification Process</h4>
@@ -1462,17 +1698,36 @@
                     <div class="impl-step">
                         <div class="impl-step-number">4</div>
                         <div class="impl-step-content">
-                            <h4>Quantify the Pain</h4>
-                            <p>Validated pain still needs sizing. What % of users experience it? How often? What's the cost of not solving it? This informs prioritization.</p>
+                            <h4>Abstract Above the Request</h4>
+                            <p>Customer requests are a cocktail of their design skills, product knowledge, and understanding of their pain. They know nothing of your roadmap, technical constraints, or vision. <strong>Abstract a level or two above</strong> what's requested into something that makes sense to you and benefits all customers.</p>
                         </div>
                     </div>
                     <div class="impl-step">
                         <div class="impl-step-number">5</div>
                         <div class="impl-step-content">
-                            <h4>Go Deeper Than the Request</h4>
-                            <p>Even if validated, never build the requested solution blindly. Understand the job-to-be-done. "Why do you need this? What happens if you don't have it?" Often the right solution is different from what they asked for.</p>
+                            <h4>Quantify the Pain</h4>
+                            <p>Validated pain still needs sizing. What % of users experience it? How often? What's the cost of not solving it? This informs prioritization.</p>
                         </div>
                     </div>
+                    <div class="impl-step">
+                        <div class="impl-step-number">6</div>
+                        <div class="impl-step-content">
+                            <h4>Design the Right Solution</h4>
+                            <p>Now—and only now—design the solution. It may be exactly what they asked for, or something completely different. "Simpler form" became "recurring events." "Faster horse" became "automobile." The job-to-be-done is your guide.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #faf5ff; border: 1px solid #d8b4fe; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h4 style="color: #7c3aed; margin-bottom: 0.75rem;">🎯 When to Trust Your Gut</h4>
+                    <p style="color: #6b21a8; font-size: 0.875rem; margin-bottom: 0.75rem;">Occasionally a feature request will be spot on. It rhymes with everything else and perfectly fits the world the way you see it. On these occasions, you can skip steps—verification, abstraction, clustering—and trust your intuition.</p>
+                    <p style="color: #7c3aed; font-size: 0.875rem;"><strong>This shortcut only works if:</strong></p>
+                    <ul style="margin-left: 1.5rem; color: #6b21a8; font-size: 0.875rem;">
+                        <li>You're still a true user of your own product</li>
+                        <li>You're constantly in touch with the needs of your users</li>
+                        <li>The request genuinely "clicks" with your product vision</li>
+                    </ul>
+                    <p style="color: #7c3aed; font-size: 0.8rem; margin-top: 0.75rem; font-style: italic;">But on every other occasion: talk to your customers. It makes you smarter.</p>
                 </div>
 
                 <h4 style="margin-bottom: 1rem;">Statistical Significance by Segment</h4>
@@ -1533,8 +1788,10 @@
                         <li>☐ Talked to 3x the original sample (5 requests → 15 conversations)</li>
                         <li>☐ Pain came up unprompted in >50% of conversations</li>
                         <li>☐ Understood the job-to-be-done, not just the feature ask</li>
+                        <li>☐ Abstracted above the literal request to the underlying need</li>
                         <li>☐ Checked segment representation is adequate</li>
                         <li>☐ Quantified impact (users affected × frequency × severity)</li>
+                        <li>☐ Solution addresses the real problem (may differ from request)</li>
                     </ul>
                 </div>
             </div>
