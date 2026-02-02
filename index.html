@@ -604,6 +604,8 @@
                 <button class="tab" onclick="showTab('implementation')">🚀 Implementation</button>
                 <button class="tab" onclick="showTab('discovery')">🔍 Discovery Tools</button>
                 <button class="tab" onclick="showTab('targeted')">🎪 Targeted Collection</button>
+                <button class="tab" onclick="showTab('verify')">🔬 Verify Before Build</button>
+                <button class="tab" onclick="showTab('airtable')">📊 Data Collection</button>
             </div>
 
             <!-- Audience Tab -->
@@ -1416,6 +1418,316 @@
                         <li><strong>When they search and find nothing:</strong> Log the search query—this IS the feature request</li>
                         <li><strong>On cancellation:</strong> Single open-text field—"What would have changed your mind?"</li>
                     </ul>
+                </div>
+            </div>
+
+            <!-- Verify Before Build Tab -->
+            <div id="verify" class="tab-content">
+                <h3 style="margin-bottom: 1rem;">Verify Before You Build</h3>
+                <p style="color: #64748b; margin-bottom: 1.5rem;">The plural of anecdote is not data—it's a hypothesis. When you see clustering, don't build. Verify first.</p>
+
+                <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h4 style="color: #dc2626; margin-bottom: 0.75rem;">❌ The Trap</h4>
+                    <p style="color: #7f1d1d; font-size: 0.875rem;">Five users ask for a simpler event form → Team immediately kicks off "event simplification" project → Ships feature that 5 users love and 500 ignore → Wasted effort.</p>
+                </div>
+
+                <div style="background: #ecfdf5; border: 1px solid #a7f3d0; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h4 style="color: #059669; margin-bottom: 0.75rem;">✅ The Right Approach</h4>
+                    <p style="color: #065f46; font-size: 0.875rem;">Five users ask for a simpler event form → Treat this as a <strong>hypothesis</strong> → Talk to 20 more calendar users → See if the pattern holds → <strong>Then</strong> decide whether to build.</p>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">The Verification Process</h4>
+                <div class="implementation-steps" style="margin-bottom: 2rem;">
+                    <div class="impl-step">
+                        <div class="impl-step-number">1</div>
+                        <div class="impl-step-content">
+                            <h4>Cluster = Hypothesis, Not Fact</h4>
+                            <p>When you see 3-5 similar requests, you have a hypothesis worth testing—not a feature to build. Write it down: "We believe [segment] struggles with [problem]."</p>
+                        </div>
+                    </div>
+                    <div class="impl-step">
+                        <div class="impl-step-number">2</div>
+                        <div class="impl-step-content">
+                            <h4>Verify with the Right Segment</h4>
+                            <p>If 5 new users complained, talk to 20 new users. If 5 power users asked, talk to 20 power users. Don't mix segments or you'll get noise.</p>
+                        </div>
+                    </div>
+                    <div class="impl-step">
+                        <div class="impl-step-number">3</div>
+                        <div class="impl-step-content">
+                            <h4>Look for Unprompted Mentions</h4>
+                            <p>In verification calls, don't ask "Do you want X?" Ask "What's hard about [area]?" If the pain comes up unprompted, it's real. If you have to suggest it, it's weak.</p>
+                        </div>
+                    </div>
+                    <div class="impl-step">
+                        <div class="impl-step-number">4</div>
+                        <div class="impl-step-content">
+                            <h4>Quantify the Pain</h4>
+                            <p>Validated pain still needs sizing. What % of users experience it? How often? What's the cost of not solving it? This informs prioritization.</p>
+                        </div>
+                    </div>
+                    <div class="impl-step">
+                        <div class="impl-step-number">5</div>
+                        <div class="impl-step-content">
+                            <h4>Go Deeper Than the Request</h4>
+                            <p>Even if validated, never build the requested solution blindly. Understand the job-to-be-done. "Why do you need this? What happens if you don't have it?" Often the right solution is different from what they asked for.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">Statistical Significance by Segment</h4>
+                <p style="color: #64748b; margin-bottom: 1rem;">You need enough data in each segment to draw conclusions. Here's a rough guide:</p>
+
+                <table class="automation-table" style="margin-bottom: 2rem;">
+                    <thead>
+                        <tr>
+                            <th>Segment Size</th>
+                            <th>Minimum Sample</th>
+                            <th>Confidence Level</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>10-50 customers</strong></td>
+                            <td>5-10 data points</td>
+                            <td>Directional only</td>
+                            <td>Small segment—treat as qualitative insight</td>
+                        </tr>
+                        <tr>
+                            <td><strong>50-200 customers</strong></td>
+                            <td>15-30 data points</td>
+                            <td>~80% confidence</td>
+                            <td>Good enough for product decisions</td>
+                        </tr>
+                        <tr>
+                            <td><strong>200-1000 customers</strong></td>
+                            <td>50-100 data points</td>
+                            <td>~90% confidence</td>
+                            <td>Strong signal for prioritization</td>
+                        </tr>
+                        <tr>
+                            <td><strong>1000+ customers</strong></td>
+                            <td>100-300 data points</td>
+                            <td>~95% confidence</td>
+                            <td>Statistical significance for major decisions</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <h4 style="color: #92400e; margin-bottom: 0.75rem;">⚠️ Watch Out: Segment Gaps</h4>
+                    <p style="color: #a16207; font-size: 0.875rem; margin-bottom: 0.75rem;">Before acting on feedback, check your coverage:</p>
+                    <ul style="margin-left: 1.5rem; color: #92400e; font-size: 0.875rem;">
+                        <li>Do we have enough feedback from <strong>each model</strong> (Large, Small, Codestral)?</li>
+                        <li>Do we have enough from <strong>each industry</strong> (Finance, Healthcare, Tech)?</li>
+                        <li>Do we have enough from <strong>each region</strong> (if relevant)?</li>
+                        <li>If a segment is under-represented, actively seek their input before deciding.</li>
+                    </ul>
+                </div>
+
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                    <h4 style="color: #0369a1; margin-bottom: 0.75rem;">💡 The Verification Checklist</h4>
+                    <ul style="margin-left: 1.5rem; color: #0c4a6e; font-size: 0.875rem;">
+                        <li>☐ Hypothesis written down (not just a feature name)</li>
+                        <li>☐ Talked to 3x the original sample (5 requests → 15 conversations)</li>
+                        <li>☐ Pain came up unprompted in >50% of conversations</li>
+                        <li>☐ Understood the job-to-be-done, not just the feature ask</li>
+                        <li>☐ Checked segment representation is adequate</li>
+                        <li>☐ Quantified impact (users affected × frequency × severity)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Airtable Data Collection Tab -->
+            <div id="airtable" class="tab-content">
+                <h3 style="margin-bottom: 1rem;">Centralizing Data in Airtable</h3>
+                <p style="color: #64748b; margin-bottom: 1.5rem;">Use Airtable as the central hub to collect, organize, and enrich all feedback with customer data.</p>
+
+                <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1px solid #a7f3d0; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h4 style="color: #065f46; margin-bottom: 0.75rem;">Why Airtable?</h4>
+                    <ul style="margin-left: 1.5rem; color: #047857; font-size: 0.875rem;">
+                        <li><strong>Flexible schema:</strong> Add fields as you learn what matters</li>
+                        <li><strong>Multiple views:</strong> PMs, Sales, and Eng each see their own view of the same data</li>
+                        <li><strong>Easy enrichment:</strong> Link to customer records for segmentation</li>
+                        <li><strong>Automations:</strong> Trigger Slack alerts, sync to other tools</li>
+                        <li><strong>Reporting:</strong> Built-in charts for trends and coverage</li>
+                    </ul>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">Recommended Base Structure</h4>
+
+                <div class="segment-grid" style="margin-bottom: 2rem;">
+                    <div class="segment-card" style="grid-column: span 2;">
+                        <h5>📋 Table 1: Feedback Items</h5>
+                        <table style="width: 100%; font-size: 0.8rem; margin-top: 0.5rem;">
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.4rem 0; font-weight: 600; width: 140px;">Feedback ID</td>
+                                <td style="padding: 0.4rem 0; color: #64748b;">Auto-number</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.4rem 0; font-weight: 600;">Date</td>
+                                <td style="padding: 0.4rem 0; color: #64748b;">When received</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.4rem 0; font-weight: 600;">Source</td>
+                                <td style="padding: 0.4rem 0; color: #64748b;">Slack, Call, Support, In-app, etc.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.4rem 0; font-weight: 600;">Category</td>
+                                <td style="padding: 0.4rem 0; color: #64748b;">Request, Bug, Pain Point, Praise, Churn Signal</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.4rem 0; font-weight: 600;">Verbatim</td>
+                                <td style="padding: 0.4rem 0; color: #64748b;">Exact quote from customer</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.4rem 0; font-weight: 600;">Summary</td>
+                                <td style="padding: 0.4rem 0; color: #64748b;">1-line distillation</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.4rem 0; font-weight: 600;">Product/Model</td>
+                                <td style="padding: 0.4rem 0; color: #64748b;">API, Le Chat, Large, Codestral, etc.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.4rem 0; font-weight: 600;">Customer (linked)</td>
+                                <td style="padding: 0.4rem 0; color: #64748b;">→ Links to Customers table</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 0.4rem 0; font-weight: 600;">Theme (linked)</td>
+                                <td style="padding: 0.4rem 0; color: #64748b;">→ Links to Themes table</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.4rem 0; font-weight: 600;">Status</td>
+                                <td style="padding: 0.4rem 0; color: #64748b;">New, Reviewing, Validated, Building, Shipped, Won't Do</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="segment-card">
+                        <h5>🏢 Table 2: Customers</h5>
+                        <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem;">Enrichment data for segmentation:</p>
+                        <ul style="font-size: 0.8rem; margin-left: 1rem; color: #64748b; margin-top: 0.5rem;">
+                            <li>Company Name</li>
+                            <li>Industry</li>
+                            <li>Region</li>
+                            <li>Tier (ARR band)</li>
+                            <li>Lifecycle Stage</li>
+                            <li>Primary Use Case</li>
+                            <li>Account Owner</li>
+                            <li>Days as Customer</li>
+                        </ul>
+                    </div>
+                    <div class="segment-card">
+                        <h5>🏷️ Table 3: Themes</h5>
+                        <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem;">Cluster related feedback:</p>
+                        <ul style="font-size: 0.8rem; margin-left: 1rem; color: #64748b; margin-top: 0.5rem;">
+                            <li>Theme Name</li>
+                            <li>Description</li>
+                            <li>Status (Hypothesis, Validated, In Progress, Shipped)</li>
+                            <li>Feedback Count (rollup)</li>
+                            <li>Unique Customers (rollup)</li>
+                            <li>Total ARR Impacted (rollup)</li>
+                            <li>Owner (PM)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">Key Views to Create</h4>
+
+                <div class="category-grid" style="margin-bottom: 2rem;">
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #dbeafe;">👔</div>
+                            <div class="category-title">Leadership View</div>
+                        </div>
+                        <p class="category-desc">Grouped by Theme, sorted by ARR impact. Shows top 10 themes with customer count and total ARR.</p>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #dcfce7;">📋</div>
+                            <div class="category-title">PM View</div>
+                        </div>
+                        <p class="category-desc">Filtered by Product/Model. Kanban by Status. Includes verbatims for context.</p>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #fee2e2;">🐛</div>
+                            <div class="category-title">Engineering View</div>
+                        </div>
+                        <p class="category-desc">Filtered to Bugs only. Sorted by severity × customer impact. Links to Linear issues.</p>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-icon" style="background: #fef3c7;">💼</div>
+                            <div class="category-title">Sales View</div>
+                        </div>
+                        <p class="category-desc">Filtered by Account Owner. Shows feedback for their accounts + status of requested features.</p>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">Coverage Dashboard</h4>
+                <p style="color: #64748b; margin-bottom: 1rem;">Use Airtable charts to ensure you have statistically significant data per segment:</p>
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <div class="segment-grid">
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #0f172a;">📊</div>
+                            <p style="font-size: 0.875rem; color: #64748b; margin-top: 0.5rem;"><strong>By Model</strong><br>Feedback count per model</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #0f172a;">📊</div>
+                            <p style="font-size: 0.875rem; color: #64748b; margin-top: 0.5rem;"><strong>By Industry</strong><br>Feedback count per vertical</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #0f172a;">📊</div>
+                            <p style="font-size: 0.875rem; color: #64748b; margin-top: 0.5rem;"><strong>By Tier</strong><br>Enterprise vs Mid-Market</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #0f172a;">📊</div>
+                            <p style="font-size: 0.875rem; color: #64748b; margin-top: 0.5rem;"><strong>By Lifecycle</strong><br>New vs Established</p>
+                        </div>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; color: #64748b; font-size: 0.8rem;">🔴 Red flag if any segment has < 15 data points—actively seek more input before deciding.</p>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">Automations to Set Up</h4>
+                <table class="automation-table">
+                    <thead>
+                        <tr>
+                            <th>Trigger</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>New feedback added</td>
+                            <td>Post to #product-feedback Slack with customer tier + category</td>
+                        </tr>
+                        <tr>
+                            <td>Theme reaches 5+ feedback items</td>
+                            <td>Alert PM owner: "Theme X has critical mass—time to verify"</td>
+                        </tr>
+                        <tr>
+                            <td>Status changes to "Shipped"</td>
+                            <td>Notify all linked customers via their Account Owner</td>
+                        </tr>
+                        <tr>
+                            <td>Weekly (Fridays)</td>
+                            <td>Send digest: Top themes, coverage gaps, new high-value feedback</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">
+                    <h4 style="color: #0369a1; margin-bottom: 0.75rem;">💡 Getting Started</h4>
+                    <ol style="margin-left: 1.5rem; color: #0c4a6e; font-size: 0.875rem;">
+                        <li>Create the base with the three tables (Feedback, Customers, Themes)</li>
+                        <li>Import your customer list from Salesforce (CSV export)</li>
+                        <li>Set up a Slack → Airtable Zapier to capture emoji-reacted messages</li>
+                        <li>Create the four role-based views</li>
+                        <li>Add the coverage charts to spot gaps</li>
+                        <li>Start logging—even manually at first—to build the habit</li>
+                    </ol>
                 </div>
             </div>
         </div>
